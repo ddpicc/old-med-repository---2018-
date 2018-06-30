@@ -13,8 +13,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'List',
-      component: List
+      name: 'Order',
+      component: Order
     },
     {
       path : '/league/:name',
@@ -22,9 +22,9 @@ export default new Router({
       component : Detail
     },
     {
-      path : '/order',
-      name : 'Order',
-      component : Order
+      path : '/DataOper',
+      name : 'DataOper',
+      component : List
     },
   ]
 })

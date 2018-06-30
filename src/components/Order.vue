@@ -7,9 +7,9 @@
       <el-container direction="vertical">
         <el-input  placeholder="请输入关键字" icon="search"  class="search"  v-model="search" ></el-input>
         <el-table  :data="tables" height="500" style="width: 100%" width="500">
-          <el-table-column prop="medname" label="名称" ></el-table-column>
+          <el-table-column prop="medname" label="药品名称" ></el-table-column>
           <el-table-column prop="spec" label="规格"> </el-table-column>
-          <el-table-column prop="sellprice"  label="单价"></el-table-column>
+          <el-table-column prop="sellprice"  label="零售价"></el-table-column>
           <el-table-column width="60">
             <template slot-scope="scope">
               <el-button-group>
@@ -22,7 +22,12 @@
       <el-container direction="vertical">
         <el-table  :data="ordertb" height="400" border show-summary :summary-method="getSummary" style="width: 100%">
           <el-table-column  prop="medname" label="名称"></el-table-column>
-          <el-table-column   prop="sellprice"  label="单价"></el-table-column>
+          <el-table-column  label="数量">        
+            <template slot-scope="scope">
+              <el-input  v-model="scope.row.number" @change="handleInput(scope.row)"></el-input>
+            </template>
+          </el-table-column>
+          <el-table-column  prop="medTotal" label="价钱"></el-table-column>
           <el-table-column width="60">
             <template slot-scope="scope">
               <el-button-group>
@@ -61,7 +66,7 @@ export default {
             })
           })
         }
-        return this.tableData
+        return this.tableData;
       }
     },
     methods: {
@@ -81,8 +86,12 @@ export default {
 
       add: function(row) {
         if(this.ordertb.indexOf(row) === -1){
+          this.$set(row,"medTotal", row.sellprice);
+          this.$set(row,"number", 1);
           this.ordertb.push(row);
-          this.dose = 1;
+          if(this.dose === '')
+            this.dose = 1;
+          //this.price = row.sellprice * this.bagcount;
         }
         else
           alert("already exist");
@@ -90,6 +99,8 @@ export default {
 
       deleteline: function(index) {
         this.ordertb.splice(index,1);
+        this.total = '';
+        this.dose = 1;
       },
 
       getSummary(param){
@@ -111,8 +122,8 @@ export default {
                 return prev;
               }
             }, 0);
-            this.totalPerOrder = sums[index];
-            let temp = this.totalPerOrder * this.dose;
+            this.totalPerOrder = sums[index].toFixed(2);
+            let temp = (this.totalPerOrder * this.dose).toFixed(2);
             temp += ' 元';
             this.total = temp;
             sums[index] += ' 元';
@@ -121,7 +132,14 @@ export default {
           }
         });
         return sums;
-      }
+      },
+
+      handleInput:function(value){
+        if( value.number===""){
+          value.number=1;
+        }
+        value.medTotal=(value.number*value.sellprice).toFixed(2);//保留两位小数
+      },
     },
 
     watch: {
@@ -133,14 +151,16 @@ export default {
         temp += ' 元';
         this.total = temp;
         //alert(this.dose * this.totalPerOrder);
-      }
+      },
+      
+
     },
 
     //页面初始化进来查询数据
     mounted: function() {
       this.getAll();
     }
-};
+}
 </script>
 
 <style lang="css">

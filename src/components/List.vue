@@ -31,20 +31,20 @@
             </el-table-column>
             <el-table-column
             prop="baseprice"
-            label="基准价"
+            label="进价"
             align="center"
             width="150">
             </el-table-column>
             
             <el-table-column
-            prop="actualprice"
-            label="实得价"
+            prop="sellprice"
+            label="零售价"
             align="center"
             width="150">
             </el-table-column>
             <el-table-column
-            prop="sellprice"
-            label="卖价"
+            prop="profit"
+            label="利润"
             align="center"
             width="150">
             </el-table-column>
@@ -78,22 +78,17 @@
       <el-input v-model="addForm.count" auto-complete="off"></el-input>
     </el-form-item>
 
-     <el-form-item label="基准价" :label-width="formLabelWidth">
+     <el-form-item label="进价" :label-width="formLabelWidth">
       <el-input v-model="addForm.baseprice" auto-complete="off"></el-input>
     </el-form-item>
 
-    <el-form-item label="实得价" :label-width="formLabelWidth">
-      <el-input v-model="addForm.actualprice" auto-complete="off"></el-input>
-    </el-form-item>
-
-    <el-form-item label="卖价" :label-width="formLabelWidth">
+    <el-form-item label="零售价" :label-width="formLabelWidth">
       <el-input v-model="addForm.sellprice" auto-complete="off"></el-input>
     </el-form-item>
 
-    <el-form-item label="背景" :label-width="formLabelWidth">
-      <el-input v-model="addForm.explain" auto-complete="off"></el-input>
+    <el-form-item label="利润" :label-width="formLabelWidth">
+      <el-input v-model="addForm.profit" auto-complete="off"></el-input>
     </el-form-item>
-
 
   </el-form>
   <div slot="footer" class="dialog-footer">
@@ -118,21 +113,18 @@
       <el-input v-model="addForm.count" auto-complete="off"></el-input>
     </el-form-item>
 
-     <el-form-item label="基准价" :label-width="formLabelWidth">
+     <el-form-item label="进价" :label-width="formLabelWidth">
       <el-input v-model="addForm.baseprice" auto-complete="off"></el-input>
     </el-form-item>
 
-    <el-form-item label="实得价" :label-width="formLabelWidth">
-      <el-input v-model="addForm.actualprice" auto-complete="off"></el-input>
-    </el-form-item>
-
-    <el-form-item label="卖价" :label-width="formLabelWidth">
+    <el-form-item label="零售价" :label-width="formLabelWidth">
       <el-input v-model="addForm.sellprice" auto-complete="off"></el-input>
     </el-form-item>
 
-    <el-form-item label="背景" :label-width="formLabelWidth">
-      <el-input v-model="addForm.explain" auto-complete="off"></el-input>
+    <el-form-item label="利润" :label-width="formLabelWidth">
+      <el-input v-model="addForm.profit" auto-complete="off"></el-input>
     </el-form-item>
+
 
 
   </el-form>
@@ -166,7 +158,6 @@ export default {
   name: "list",
   data: function() {
     return {
-      title: "hello world",
       tableData: [],
       addFormVisible: false,
       modifyFormVisible: false,
@@ -181,34 +172,23 @@ export default {
         spec: "",
         count: "",
         baseprice: "",
-        actualprice: "",
         sellprice: "",
-        explain: ""
+        profit: "",
       },
       modifyForm: {
         medname: "",
         spec: "",
         count: "",
         baseprice: "",
-        actualprice: "",
         sellprice: "",
-        explain: ""
+        profit: "",
       },
       formLabelWidth: "120px",
       loading: false
     };
   },
   methods: {
-    /*
-    jungleSex: function(sex) {
-      if (sex == "man") {
-        return "汉子";
-      } else if (sex == "woman") {
-        return "妹子";
-      } else {
-        return "";
-      }
-    },*/
+
     add: function() {
       this.addFormVisible = true;
     },
@@ -243,9 +223,8 @@ export default {
       this.addForm.spec = "";
       this.addForm.count = "";
       this.addForm.baseprice = "";
-      this.addForm.actualprice = "";
       this.addForm.sellprice = "";
-      this.addForm.explain = "";
+      this.addForm.profit = "";
     },
     //修改操作
     modify: function(row) {

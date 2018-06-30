@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <h3 class="title">{{title}}</h3>
     <router-view></router-view>
   </div>
 </template>
@@ -12,7 +11,6 @@ export default {
   name: 'App',
   data:function(){
     return {
-      title:"学习vue+mongod+nodejs构建项目后台"
     }
   }
 }

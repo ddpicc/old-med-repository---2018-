@@ -52,9 +52,8 @@ router.put("/hero/:id", (req, res) => {
         spec: req.body.spec,
         count: req.body.count,
         baseprice: req.body.baseprice,
-        actualprice: req.body.actualprice,
         sellprice: req.body.sellprice,
-        explain: req.body.explain
+        profit: req.body.profit
       }
     },
     {
