@@ -18,6 +18,12 @@
             width="120">
             </el-table-column>
             <el-table-column
+            prop="alias"
+            label="别名"
+            align="center"
+            width="100">
+            </el-table-column>
+            <el-table-column
             prop="spec"
             label="规格"
             align="center"
@@ -53,10 +59,8 @@
             align="center"
             width="360">
             <template slot-scope="scope">
-                <el-button  size="small" type="primary" @click="toDetail(scope.row['_id'])">详情</el-button>
                 <el-button  size="small" type="success" @click="modify(scope.row)">修改</el-button>
                 <el-button type="danger" size="small" @click="deleteDate(scope.row['_id'])">删除</el-button>
-                <el-button type="warning" size="small" @click="addPic(scope.row['_id'])">添加图片</el-button>
             </template>
             </el-table-column>
   </el-table>
@@ -68,6 +72,10 @@
 
     <el-form-item label="药品名称" :label-width="formLabelWidth">
       <el-input v-model="addForm.medname" auto-complete="off"></el-input>
+    </el-form-item>
+
+    <el-form-item label="别名" :label-width="formLabelWidth">
+      <el-input v-model="addForm.alias" auto-complete="off"></el-input>
     </el-form-item>
 
     <el-form-item label="规格" :label-width="formLabelWidth">
@@ -102,27 +110,31 @@
   <el-form :model="modifyForm" class="addForm">
 
     <el-form-item label="药品名称" :label-width="formLabelWidth">
-      <el-input v-model="addForm.medname" auto-complete="off"></el-input>
+      <el-input v-model="modifyForm.medname" auto-complete="off"></el-input>
+    </el-form-item>
+
+    <el-form-item label="别名" :label-width="formLabelWidth">
+      <el-input v-model="modifyForm.alias" auto-complete="off"></el-input>
     </el-form-item>
 
     <el-form-item label="规格" :label-width="formLabelWidth">
-      <el-input v-model="addForm.spec" auto-complete="off"></el-input>
+      <el-input v-model="modifyForm.spec" auto-complete="off"></el-input>
     </el-form-item>
 
     <el-form-item label="数量" :label-width="formLabelWidth">
-      <el-input v-model="addForm.count" auto-complete="off"></el-input>
+      <el-input v-model="modifyForm.count" auto-complete="off"></el-input>
     </el-form-item>
 
      <el-form-item label="进价" :label-width="formLabelWidth">
-      <el-input v-model="addForm.baseprice" auto-complete="off"></el-input>
+      <el-input v-model="modifyForm.baseprice" auto-complete="off"></el-input>
     </el-form-item>
 
     <el-form-item label="零售价" :label-width="formLabelWidth">
-      <el-input v-model="addForm.sellprice" auto-complete="off"></el-input>
+      <el-input v-model="modifyForm.sellprice" auto-complete="off"></el-input>
     </el-form-item>
 
     <el-form-item label="利润" :label-width="formLabelWidth">
-      <el-input v-model="addForm.profit" auto-complete="off"></el-input>
+      <el-input v-model="modifyForm.profit" auto-complete="off"></el-input>
     </el-form-item>
 
 
@@ -135,7 +147,7 @@
 </el-dialog>
 
 
-<!-- 添加图片 -->
+<!-- 添加图片 
 <el-dialog title="添加图片" :visible.sync="addpicVisible" class="addPicArea" @close="closePicAdd">
   <el-form :model="addpicform">
     <el-form-item label="图片地址" :label-width="formLabelWidth">
@@ -146,7 +158,7 @@
     <el-button @click="addpicVisible = false">取 消</el-button>
     <el-button type="primary" @click="addpicSure">确 定</el-button>
   </div>
-</el-dialog>
+</el-dialog>-->
 
 <el-button type="primary" class="addBtn" @click="add" icon="el-icon-plus">添加</el-button>
   
@@ -169,6 +181,7 @@ export default {
       },
       addForm: {
         medname: "",
+        alias: "",
         spec: "",
         count: "",
         baseprice: "",
@@ -177,6 +190,7 @@ export default {
       },
       modifyForm: {
         medname: "",
+        alias: "",
         spec: "",
         count: "",
         baseprice: "",
@@ -220,6 +234,7 @@ export default {
     // 关闭dialog的函数
     closeAdd: function() {
       this.addForm.medname = "";
+      this.addForm.alias = "";
       this.addForm.spec = "";
       this.addForm.count = "";
       this.addForm.baseprice = "";
@@ -307,11 +322,6 @@ export default {
           console.log("error");
         }
       );
-    },
-    //跳转至详情页面
-    toDetail: function(id) {
-      //通过这种方式也可以实现跳转
-      this.$router.push(`/league/${id}`);
     },
     addPic: function(id) {
       this.addpicId = id;

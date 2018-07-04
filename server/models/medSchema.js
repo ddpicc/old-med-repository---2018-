@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 
 const medSchema = mongoose.Schema({
   medname :String,
+  alias: String,
   spec : String,
   count : Number,
   baseprice : Number,

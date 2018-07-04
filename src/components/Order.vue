@@ -1,8 +1,5 @@
 <template>
-  <el-container style="height: 500px; border: 1px solid #eee">
-    <el-aside width="100px" style="background-color: rgb(238, 241, 246)">
-    </el-aside>
-
+  <div class="order">
     <el-container>
       <el-container direction="vertical">
         <el-input  placeholder="请输入关键字" icon="search"  class="search"  v-model="search" ></el-input>
@@ -42,7 +39,15 @@
         </div>
       </el-container>
     </el-container>
-  </el-container>
+
+<el-dialog title="收货地址" :visible.sync="dialogTableVisible">
+  <el-table :data="gridData">
+    <el-table-column property="date" label="日期" width="150"></el-table-column>
+    <el-table-column property="name" label="姓名" width="200"></el-table-column>
+    <el-table-column property="address" label="地址"></el-table-column>
+  </el-table>
+</el-dialog>
+  </div>  
 </template>
 <script>
 export default {
@@ -53,7 +58,8 @@ export default {
         ordertb: [],
         totalPerOrder: 0,
         dose: '',
-        total: ''
+        total: '',
+        dialogTableVisible: true
       }
     },
     computed:{
@@ -91,7 +97,6 @@ export default {
           this.ordertb.push(row);
           if(this.dose === '')
             this.dose = 1;
-          //this.price = row.sellprice * this.bagcount;
         }
         else
           alert("already exist");
@@ -126,7 +131,7 @@ export default {
             let temp = (this.totalPerOrder * this.dose).toFixed(2);
             temp += ' 元';
             this.total = temp;
-            sums[index] += ' 元';
+            sums[index] = this.totalPerOrder + ' 元';
           } else {
             sums[index] = '--';
           }
@@ -140,6 +145,8 @@ export default {
         }
         value.medTotal=(value.number*value.sellprice).toFixed(2);//保留两位小数
       },
+
+
     },
 
     watch: {

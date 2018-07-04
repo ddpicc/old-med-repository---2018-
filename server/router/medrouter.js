@@ -49,6 +49,7 @@ router.put("/hero/:id", (req, res) => {
     {
       $set: {
         medname: req.body.medname,
+        alias: req.body.alias,
         spec: req.body.spec,
         count: req.body.count,
         baseprice: req.body.baseprice,
