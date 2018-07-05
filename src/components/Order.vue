@@ -3,14 +3,15 @@
     <el-container>
       <el-container direction="vertical">
         <el-input  placeholder="请输入关键字" icon="search"  class="search"  v-model="search" ></el-input>
-        <el-table  :data="tables" height="500" style="width: 100%" width="500">
+        <el-table  :data="tables" height="500" style="width: 100%" width="1200">
           <el-table-column prop="medname" label="药品名称" ></el-table-column>
+          <el-table-column prop="alias"   label="别名">  </el-table-column>
           <el-table-column prop="spec" label="规格"> </el-table-column>
           <el-table-column prop="sellprice"  label="零售价"></el-table-column>
           <el-table-column width="60">
             <template slot-scope="scope">
               <el-button-group>
-                <el-button type="success" size="small" icon="el-icon-plus" @click="add(scope.row)" round="true"></el-button>
+                <el-button type="success" size="small" icon="el-icon-plus" @click="add(scope.row)" round></el-button>
               </el-button-group>
             </template>
           </el-table-column>
@@ -28,7 +29,7 @@
           <el-table-column width="60">
             <template slot-scope="scope">
               <el-button-group>
-                <el-button type="danger" size="small" icon="el-icon-delete" @click="deleteline(scope.$index)" round="true"></el-button>
+                <el-button type="danger" size="small" icon="el-icon-delete" @click="deleteline(scope.$index)" round></el-button>
               </el-button-group>
             </template>
           </el-table-column>
@@ -36,16 +37,22 @@
         <div class="dose-input">
           <el-input  placeholder="请输入多少付" v-model="dose" size="small"></el-input>
           <el-input  placeholder="总价" v-model="total" size="small"></el-input>
+          <el-button type="success" size="small" @click="postorder" round>生成订单</el-button>
         </div>
       </el-container>
     </el-container>
 
-<el-dialog title="收货地址" :visible.sync="dialogTableVisible">
-  <el-table :data="gridData">
-    <el-table-column property="date" label="日期" width="150"></el-table-column>
-    <el-table-column property="name" label="姓名" width="200"></el-table-column>
-    <el-table-column property="address" label="地址"></el-table-column>
-  </el-table>
+<el-dialog title="订单" center :visible.sync="dialogTableVisible">
+  <el-tag>标签一</el-tag>
+<el-tag type="success">标签二</el-tag>
+<el-tag type="info">标签三</el-tag><br>
+<el-tag type="warning">标签四</el-tag>
+<el-tag type="danger">标签五</el-tag>
+  <div class="dose-input">
+          <el-input  placeholder="请输入多少付" v-model="dose" size="small"></el-input>
+          <el-input  placeholder="总价" v-model="total" size="small"></el-input>
+          <el-button type="success" size="small" @click="postorder" round>生成</el-button>
+        </div>
 </el-dialog>
   </div>  
 </template>
@@ -59,7 +66,8 @@ export default {
         totalPerOrder: 0,
         dose: '',
         total: '',
-        dialogTableVisible: true
+        dialogTableVisible: false,
+        gridData: []
       }
     },
     computed:{
@@ -146,6 +154,28 @@ export default {
         value.medTotal=(value.number*value.sellprice).toFixed(2);//保留两位小数
       },
 
+      postorder:function(){
+        this.dialogTableVisible = true;
+        let index = 0;
+        for(let item of this.ordertb) {
+          index = index+1;
+          //alert(JSON.stringify(item));
+          if(index%2 ==0){
+            this.gridData[0].push({
+              name1: item.medname,
+              count1: item.number
+            })
+          }
+          else{
+            this.gridData[0].push({
+              name2: item.medname,
+              count2: item.number
+            })
+          }
+
+        }
+      }
+
 
     },
 
@@ -175,6 +205,8 @@ export default {
   color: #000;
 }
 .dose-input {
-   text-align: right;
+    display:flex;
 }
+
+
 </style>
