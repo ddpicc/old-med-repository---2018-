@@ -1,5 +1,6 @@
 const express = require('express');
 const med = require('./router/medrouter')
+const ord = require('./router/orderrouter')
 const mongoose = require("mongoose");
 
 const bodyParser = require("body-parser")
@@ -17,7 +18,9 @@ const bodyParser = require("body-parser")
 const app = express()
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use('/api',med)
+app.use('/medapi',med);
+app.use('/ordapi',ord);
+
 app.all("*",(req,res,next) => {
     res.header("Access-Control-Allow-Credentials", "ture");
     res.header("Access-Control-Allow-Origin", req.header.origin);

@@ -89,7 +89,7 @@ router.delete("/hero/:id", (req, res) => {
   })
     .then(hero => res.send(`${hero.title}删除成功`))
     .catch(err => res.json(err));
-});
+})
 
 module.exports = router;
 

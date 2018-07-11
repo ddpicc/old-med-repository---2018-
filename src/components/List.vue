@@ -214,7 +214,7 @@ export default {
 
       var addObj = this.addForm;
 
-      this.$http.post("/api/hero", addObj).then(
+      this.$http.post("/medapi/hero", addObj).then(
         function(response) {
           if (response.ok) {
             this.$message({
@@ -250,7 +250,7 @@ export default {
     modifySure: function() {
       var that = this;
       this.$http
-        .put(`/api/hero/${this.modifyId}`, this.modifyForm, {
+        .put(`/medapi/hero/${this.modifyId}`, this.modifyForm, {
           emulateJSON: true
         })
         .then(
@@ -282,7 +282,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.$http.delete(`/api/hero/${deleteId}`).then(
+          this.$http.delete(`/medapi/hero/${deleteId}`).then(
             function(response) {
               if (response.ok) {
                 this.$message({
@@ -312,7 +312,7 @@ export default {
     // 获取全部数据
     getAll: function() {
       this.loading = true;
-      this.$http.get("/api/hero").then(
+      this.$http.get("/medapi/hero").then(
         function(response) {
           this.loading = false;
           this.tableData = response.body;
@@ -344,7 +344,7 @@ export default {
         url: this.addpicform.url
       };
 
-      this.$http.put(`/api/addpic/${this.addpicId}`, addObj).then(
+      this.$http.put(`/medapi/addpic/${this.addpicId}`, addObj).then(
         function(response) {
           console.log(response);
           if (response.ok) {

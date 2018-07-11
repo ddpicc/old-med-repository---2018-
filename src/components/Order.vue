@@ -42,20 +42,23 @@
       </el-container>
     </el-container>
 
-<el-dialog title="订单" center :visible.sync="dialogTableVisible">
-  <el-tag>标签一</el-tag>
-<el-tag type="success">标签二</el-tag>
-<el-tag type="info">标签三</el-tag><br>
-<el-tag type="warning">标签四</el-tag>
-<el-tag type="danger">标签五</el-tag>
-  <div class="dose-input">
-          <el-input  placeholder="请输入多少付" v-model="dose" size="small"></el-input>
-          <el-input  placeholder="总价" v-model="total" size="small"></el-input>
-          <el-button type="success" size="small" @click="postorder" round>生成</el-button>
-        </div>
-</el-dialog>
+    <el-dialog title="订单" center :visible.sync="dialogTableVisible"  @close='closeDialog'>
+      <el-table  :data="gridData" height="300" style="width: 100%" width="900">
+        <el-table-column prop="mednameFirst"></el-table-column>
+        <el-table-column prop="countFirst">  </el-table-column>
+      </el-table>
+      <div class="order-input">
+        <el-tag type="success">{{'共' + dose + '付'}}</el-tag>
+        <el-tag type="success">{{total}}</el-tag>
+        <el-input  placeholder="请输入病人名字" v-model="patient" size="small"></el-input>
+        <el-input  placeholder="地址" v-model="address" size="small"></el-input>
+        <el-button type="success" size="small" @click="postOrdToDbSure" round> 确认</el-button>
+        <el-button type="success" size="small" @click="closeDialog" round>取消</el-button>
+      </div>
+    </el-dialog>
   </div>  
 </template>
+
 <script>
 export default {
   data: function() {
@@ -67,7 +70,9 @@ export default {
         dose: '',
         total: '',
         dialogTableVisible: false,
-        gridData: []
+        gridData: [],
+        patient: '',
+        address: ''
       }
     },
     computed:{
@@ -86,7 +91,7 @@ export default {
     methods: {
       getAll: function() {
         this.loading = true;
-        this.$http.get("/api/hero").then(
+        this.$http.get("/medapi/hero").then(
           function(response) {
             this.loading = false;
             this.tableData = response.body;
@@ -99,6 +104,7 @@ export default {
       },
 
       add: function(row) {
+        //alert(this.ordertb.length);
         if(this.ordertb.indexOf(row) === -1){
           this.$set(row,"medTotal", row.sellprice);
           this.$set(row,"number", 1);
@@ -113,7 +119,8 @@ export default {
       deleteline: function(index) {
         this.ordertb.splice(index,1);
         this.total = '';
-        this.dose = 1;
+        if(this.ordertb.length === 0)
+          this.dose = '';
       },
 
       getSummary(param){
@@ -156,24 +163,58 @@ export default {
 
       postorder:function(){
         this.dialogTableVisible = true;
-        let index = 0;
         for(let item of this.ordertb) {
-          index = index+1;
           //alert(JSON.stringify(item));
-          if(index%2 ==0){
-            this.gridData[0].push({
-              name1: item.medname,
-              count1: item.number
-            })
-          }
-          else{
-            this.gridData[0].push({
-              name2: item.medname,
-              count2: item.number
-            })
-          }
-
+          this.gridData.push({
+            mednameFirst: item.medname,
+            countFirst: item.number
+          })
         }
+        
+      },
+
+      closeDialog:function(){
+        this.gridData = [];//清空数据
+        this.dialogTableVisible = false;
+      },
+
+      postOrdToDbSure:function(){
+        let orderMed = [];
+        let ordProfit = 0.00;
+        for(let item of this.ordertb) {
+          //alert(JSON.stringify(item));
+          ordProfit = parseFloat((ordProfit + item.profit).toFixed(2));
+          orderMed.push({
+            medname: item.medname,
+            count: item.number,
+          })
+        }
+        ordProfit = parseFloat((ordProfit * this.dose).toFixed(2));
+        var addOrd = [{
+          patient :'aaa',
+          orderalias: 'new',
+          address : 'sss',
+          med : orderMed,
+          dose : this.dose,
+          total : parseFloat(this.total),
+          totalprofit : ordProfit,
+        }];
+
+      this.dialogTableVisible = false;
+
+      this.$http.post("/ordapi/order", addOrd).then(
+        function(response) {
+          if (response.ok) {
+            this.$message({
+              message: "添加成功",
+              type: "success"
+            });
+          }
+        },
+        function() {
+          // this.loading = false;
+        }
+      );
       }
 
 

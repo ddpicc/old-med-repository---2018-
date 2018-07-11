@@ -11,7 +11,11 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-        '/api': {
+        '/medapi': {
+          target: 'http://localhost:3000',
+          changeOrigin: true,
+        },
+        '/ordapi': {
           target: 'http://localhost:3000',
           changeOrigin: true,
         }
