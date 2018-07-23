@@ -10,6 +10,7 @@ const ordSchema = new Schema({
     dose : Number,
     total : Number,
     totalprofit : Number,
+    editable : Boolean,
   }, { collection: 'myOrd'})
 
   module.exports = mongoose.model('ord',ordSchema);

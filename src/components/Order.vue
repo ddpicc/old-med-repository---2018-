@@ -109,6 +109,7 @@ export default {
           this.$set(row,"medTotal", row.sellprice);
           this.$set(row,"number", 1);
           this.ordertb.push(row);
+          this.search = '';
           if(this.dose === '')
             this.dose = 1;
         }
@@ -191,13 +192,14 @@ export default {
         }
         ordProfit = parseFloat((ordProfit * this.dose).toFixed(2));
         var addOrd = [{
-          patient :'aaa',
+          patient :this.patient,
           orderalias: 'new',
-          address : 'sss',
+          address : this.address,
           med : orderMed,
           dose : this.dose,
           total : parseFloat(this.total),
           totalprofit : ordProfit,
+          editable: true,
         }];
 
       this.dialogTableVisible = false;
@@ -215,6 +217,10 @@ export default {
           // this.loading = false;
         }
       );
+      this.ordertb = [];
+      this.gridData = [];
+      this.dose = '';
+      this.total = '';
       }
 
 
@@ -229,8 +235,7 @@ export default {
         temp += ' 元';
         this.total = temp;
         //alert(this.dose * this.totalPerOrder);
-      },
-      
+      }, 
 
     },
 

@@ -5,6 +5,7 @@ import Router from 'vue-router'
 import List from '@/components/List'
 import Detail from '@/components/Detail'
 import Order from '@/components/Order'
+import OrderManage from '@/components/OrderManage'
 
 
 Vue.use(Router)
@@ -26,5 +27,10 @@ export default new Router({
       name : 'DataOper',
       component : List
     },
+    {
+      path : '/Order',
+      name : 'OrderManage',
+      component : OrderManage
+    }
   ]
 })

@@ -3,36 +3,105 @@ const express = require("express");
 const router = express.Router();
 //引入数据模型模块
 const Ord = require("../models/ordSchema");
+const Med = require("../models/medSchema");
 
-const execCallback = function(p,err,data,res){
-    if(err){
-      res.send(err);
-   }else{
-     //再次查询，获取总数
-     p.find().count((err,result) => {
-       if (err) {
-         res.send({'status':0,'data':'','message':err,'count':''});  
-       } else {
-         res.send({'status':1,'data':data,'message':'success','count':result});  
-       }
-       });
-   }
-  };
-  
-  router.post("/order", (req, res) => {
-    console.log(req.body);
-    Ord.create(req.body, (err, hero) => {
-        if (err) {
-          res.json(err);
-        } else {
-          res.json(hero);
-        }
-      });
-  }
-  );
-
-  router.get('/order', function(req, res) {
-    res.send('this is a sample!');
+router.post("/order", (req, res) => {
+  console.log(req.body);
+  Ord.create(req.body, (err, hero) => {
+    if (err) {
+      res.json(err);
+    } else {
+      res.json(hero);
+    }
   });
+  }
+);
 
-  module.exports = router;
+
+router.get("/order", (req, res) => {
+  Ord.find({})
+    .sort({ update_at: -1 })
+    .then(heros => {
+      res.json(heros);
+    })
+    .catch(err => {
+      console.log(2);
+      res.json(err);
+    });
+  }
+);
+
+  //删除一条订单数据
+router.delete("/order/:id", (req, res) => {
+  Ord.findOneAndRemove({
+    _id: req.params.id
+  })
+    .then(hero => res.send(`${hero.title}删除成功`))
+    .catch(err => res.json(err));
+  }
+);
+
+//更新订单状态
+router.put("/updateOrdstatus/:id", (req, res) => {
+  Ord.findOneAndUpdate(
+    { _id: req.params.id },
+    {
+      $set: {
+        editable: false,
+      }
+    },
+    {
+      new: true
+    }
+  )
+    .then(hero => res.json(hero))
+    .catch(err => res.json(err));
+});
+
+//更新药品的库存
+router.put("/order", (req, res) => {
+  let errstr;
+  let dose = req.body.dose;
+  let arr = [];
+  arr = req.body.medary;
+  arr.forEach(element => {
+    //console.log(element.medname);
+    Med.findOneAndUpdate({
+      medname: element.medname},
+      {$inc: {count: -1*element.count*dose}})
+      .then(hero => console.log('update count -' + element.medname))
+      .catch(err => {
+        errstr = err;
+        console.log(err);
+      });
+    })
+  if(errstr){
+    res.json(errstr);
+  }
+  else{
+    res.send('更新成功');
+  }
+  
+  
+  /*Med.findOneAndUpdate(
+    { _id: req.params.id },
+    {
+      $set: {
+        medname: req.body.medname,
+        alias: req.body.alias,
+        spec: req.body.spec,
+        count: req.body.count,
+        baseprice: req.body.baseprice,
+        sellprice: req.body.sellprice,
+        profit: req.body.profit
+      }
+    },
+    {
+      new: true
+    }
+  )
+    .then(hero => res.json(hero))
+    .catch(err => res.json(err));*/
+});
+
+module.exports = router;

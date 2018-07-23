@@ -1,8 +1,9 @@
 <template lang="html">
 
   <div class="list">
+    <el-input  placeholder="请输入关键字" icon="search"  class="search"  v-model="search" ></el-input>
       <el-table
-    :data="tableData"
+    :data="tables"
     stripe
     element-loading-text="拼命加载中"
     header-row-class-name="tableHeader"
@@ -174,6 +175,7 @@ export default {
       addFormVisible: false,
       modifyFormVisible: false,
       addpicVisible: false,
+      search: '',    //搜索
       modifyId: "",
       addpicId: "",
       addpicform: {
@@ -201,6 +203,32 @@ export default {
       loading: false
     };
   },
+
+  computed:{
+    tables:function(){
+      var search=this.search;
+      if(search){
+        if(search.charAt(0) == '<'){
+          let limitValue = parseInt(search.substr(1));
+          return  this.tableData.filter(function(dataNews){
+            return Object.keys(dataNews).some(function(key){
+              return dataNews.count < limitValue
+            })
+          }) 
+
+        }
+        else{
+          return  this.tableData.filter(function(dataNews){
+            return Object.keys(dataNews).some(function(key){
+              return String(dataNews[key]).toLowerCase().indexOf(search) > -1
+            })
+          })
+        }
+      }
+      return this.tableData;
+    }
+  },
+
   methods: {
 
     add: function() {
@@ -398,9 +426,6 @@ div.list {
 }
 .addForm .el-form-item {
   float: left;
-}
-.sexArea {
-  width: 200px;
 }
 .addFormArea .el-dialog__header .el-dialog__title {
   text-align: left;
