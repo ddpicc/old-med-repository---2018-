@@ -5,6 +5,7 @@ import Router from 'vue-router'
 import List from '@/components/List'
 import Detail from '@/components/Detail'
 import Order from '@/components/Order'
+import Home from '@/components/home'
 import OrderManage from '@/components/OrderManage'
 
 
@@ -16,6 +17,11 @@ export default new Router({
       path: '/',
       name: 'Order',
       component: Order
+    },
+    {
+      path: '/Login',
+      name: 'Home',
+      component: Home
     },
     {
       path : '/league/:name',

@@ -22,7 +22,7 @@
           <el-table-column  prop="medname" label="名称"></el-table-column>
           <el-table-column  label="数量">        
             <template slot-scope="scope">
-              <el-input  v-model="scope.row.number" @change="handleInput(scope.row)"></el-input>
+              <el-input  @focus="focus($event)" v-model="scope.row.number" @change="handleInput(scope.row)"></el-input>
             </template>
           </el-table-column>
           <el-table-column  prop="medTotal" label="价钱"></el-table-column>
@@ -35,8 +35,8 @@
           </el-table-column>
         </el-table>
         <div class="dose-input">
-          <el-input  placeholder="请输入多少付" v-model="dose" size="small"></el-input>
-          <el-input  placeholder="总价" v-model="total" size="small"></el-input>
+          <el-input  placeholder="请输入多少付" v-model="dose" size="small" @focus="focus($event)"></el-input>
+          <el-input  placeholder="总价" v-model="total" size="small" @focus="focus($event)"></el-input>
           <el-button type="success" size="small" @click="postorder" round>生成订单</el-button>
         </div>
       </el-container>
@@ -101,6 +101,11 @@ export default {
             console.log("error");
           }
         );
+      },
+
+    //select text when get focus
+      focus(event) {
+        event.currentTarget.select();
       },
 
       add: function(row) {
