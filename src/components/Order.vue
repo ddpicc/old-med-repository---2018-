@@ -3,7 +3,7 @@
     <el-container>
       <el-container direction="vertical">
         <el-input  placeholder="请输入关键字" icon="search"  class="search"  v-model="search" ></el-input>
-        <el-table  :data="tables" height="500" style="width: 100%" width="1200">
+        <el-table  :data="tables" height="450" style="width: 100%" width="1200">
           <el-table-column prop="medname" label="药品名称" ></el-table-column>
           <el-table-column prop="alias"   label="别名">  </el-table-column>
           <el-table-column prop="spec" label="规格"> </el-table-column>
@@ -187,9 +187,10 @@ export default {
       postOrdToDbSure:function(){
         let orderMed = [];
         let ordProfit = 0.00;
+        let mydate = new Date();
         for(let item of this.ordertb) {
           //alert(JSON.stringify(item));
-          ordProfit = parseFloat((ordProfit + item.profit).toFixed(2));
+          ordProfit = parseFloat((ordProfit + parseFloat((item.profit*item.number).toFixed(2))).toFixed(2));
           orderMed.push({
             medname: item.medname,
             count: item.number,
@@ -200,6 +201,7 @@ export default {
           patient :this.patient,
           orderalias: 'new',
           address : this.address,
+          date : mydate.toLocaleDateString(),
           med : orderMed,
           dose : this.dose,
           total : parseFloat(this.total),

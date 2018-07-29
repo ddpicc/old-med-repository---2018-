@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="container">
         <el-container class="main">
             <el-aside :width="tabWidth+'px'">
                 <div>
@@ -9,7 +9,7 @@
 
                     <el-menu :class="'menu'" :default-active="defaultActiveIndex" router :collapse="isCollapse" @select="handleSelect">
                         <el-menu-item index="/Dashboard">
-                            <i class="el-icon-date"></i>
+                            <i class="el-icon-tickets"></i>
                             <span slot="title">首页</span>
                         </el-menu-item>
                         <el-menu-item index="/Order">
@@ -43,9 +43,7 @@
                         <router-view></router-view>
                     </div>
                 </el-main>
-                <el-footer class="main-footer" height="50px">
-                    <p>footer</p>
-                </el-footer>
+
             </el-container>
         </el-container>
     </div>
@@ -100,6 +98,12 @@
     $background-color: #29aa99;
     $color: #FFF;
 
+  .container {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    width: 100%;
+  }
     .main{
         height: calc(100vh - 60px);
         min-width: 800px;

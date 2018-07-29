@@ -7,10 +7,10 @@
     stripe
     element-loading-text="拼命加载中"
     header-row-class-name="tableHeader"
-    v-loading.fullscreen.lock="loading"
+    v-loading="loading"
     empty-text="亲，暂时没有数据哦"
     border
-    style="width: 100%">
+    style="width: 100%" width="1200">
             <el-table-column
             fixed
             prop="medname"
@@ -58,7 +58,7 @@
             <el-table-column
             label="操作"
             align="center"
-            width="360">
+            width="200">
             <template slot-scope="scope">
                 <el-button  size="small" type="success" @click="modify(scope.row)">修改</el-button>
                 <el-button type="danger" size="small" @click="deleteDate(scope.row['_id'])">删除</el-button>
@@ -408,7 +408,7 @@ export default {
   color: #000;
 }
 div.list {
-  width: 90%;
+  width: 100%;
   margin: 0 auto;
 }
 .addBtn {

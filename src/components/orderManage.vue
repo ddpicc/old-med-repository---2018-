@@ -32,6 +32,10 @@
       prop="totalprofit">
     </el-table-column>
     <el-table-column
+      label="日期"
+      prop="date">
+    </el-table-column>
+    <el-table-column
         label="操作">
         <template slot-scope="scope">
             <el-button  size="small" type="success" v-if='scope.row.editable' @click="outdb(scope.row)" round>出库</el-button>

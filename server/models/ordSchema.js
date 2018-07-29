@@ -6,6 +6,7 @@ const ordSchema = new Schema({
     patient :String,
     orderalias: String,
     address : String,
+    date: String,
     med : [Schema.Types.Mixed],
     dose : Number,
     total : Number,

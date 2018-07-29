@@ -6,6 +6,8 @@
       </el-breadcrumb>
     </el-col>
 
+
+
     <el-col :span="24" class="warp-main">
       <section class="chart-container">
         <el-row>
@@ -71,7 +73,8 @@
         chartColumn: null,
         chartBar: null,
         chartLine: null,
-        chartPie: null
+        chartPie: null,
+        threeMonthOrdData: []
       };
     },
     mounted: function () {
@@ -85,15 +88,30 @@
       this.chartColumn.setOption({
         title: { text: 'Column Chart' },
         tooltip: {},
+        legend: {
+            data: ['销量']
+        },
         xAxis: {
-          data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+          data: []
         },
         yAxis: {},
         series: [{
           name: '销量',
           type: 'bar',
-          data: [5, 20, 36, 10, 10, 20]
+          data: []
         }]
+      });
+      this.$http.get("/ordapi/getOrdinThreeMonth").then(function (data) {
+          alert(JSON.stringify(data.body));
+          this.chartColumn.setOption({
+              xAxis: {
+                  data: data.body.patient
+              },
+              series: [{
+                  name: '销量',
+                  data: data.body.total
+              }]
+          })
       });
 
       this.chartBar.setOption({
@@ -222,6 +240,20 @@
           }
         ]
       });
+    },
+    methods: {
+      getOrder: function() {
+        this.$http.get("/ordapi/getOrdinThreeMonth").then(
+          function(response) {
+            this.threeMonthOrdData = response.body;
+            alert(this.threeMonthOrdData[0].total);
+          },
+          function() {
+            this.loading = false;
+            console.log("error");
+          }
+        );
+      },
     }
   }
 </script>

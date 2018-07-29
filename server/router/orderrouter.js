@@ -17,9 +17,23 @@ router.post("/order", (req, res) => {
   }
 );
 
-
+ //查找所有订单
 router.get("/order", (req, res) => {
   Ord.find({})
+    .sort({ update_at: -1 })
+    .then(heros => {
+      res.json(heros);
+    })
+    .catch(err => {
+      console.log(2);
+      res.json(err);
+    });
+  }
+);
+
+ //查找最近三个月的订单
+router.get("/getOrdinThreeMonth", (req, res) => {
+  Ord.find({"date":{$gte:"2018/7/01",$lte:"2018/7/30"}})
     .sort({ update_at: -1 })
     .then(heros => {
       res.json(heros);
