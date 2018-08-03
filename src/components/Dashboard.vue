@@ -77,44 +77,56 @@
         threeMonthOrdData: []
       };
     },
+
+
     mounted: function () {
-      var _this = this;
+      let _total = 0.00;
+      let _profit = 0.00;
+      this.$http.get("/ordapi/getOrdinThreeMonth").then(function (data) {
+        //alert(JSON.stringify(data.body));
+        for(let item of data.body) {
+           _total = _total + item.total;
+          _profit = _profit + item.totalprofit;     
+        }
+        _total = _total.toFixed(2);
+        _profit = _profit.toFixed(2);
+        this.$nextTick( () => {
       //基于准备好的dom，初始化echarts实例
-      this.chartColumn = echarts.init(document.getElementById('chartColumn'));
-      this.chartBar = echarts.init(document.getElementById('chartBar'));
-      this.chartLine = echarts.init(document.getElementById('chartLine'));
-      this.chartPie = echarts.init(document.getElementById('chartPie'));
+        this.chartColumn = echarts.init(document.getElementById('chartColumn'));
 
       this.chartColumn.setOption({
         title: { text: 'Column Chart' },
         tooltip: {},
         legend: {
-            data: ['销量']
+            data: ['总销量','总利润']
         },
-        xAxis: {
-          data: []
-        },
-        yAxis: {},
-        series: [{
-          name: '销量',
-          type: 'bar',
-          data: []
-        }]
+        xAxis : [{
+            type : 'category',
+            data : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+        }],
+        yAxis : [{
+            type : 'value'
+        }],
+        series: [
+          {
+            name: '总销量',
+            type: 'bar',
+            data: [_total]
+          },
+          {
+            name: '总利润',
+            type: 'bar',
+            data: [_profit]
+          }
+        ]
       });
-      this.$http.get("/ordapi/getOrdinThreeMonth").then(function (data) {
-          alert(JSON.stringify(data.body));
-          this.chartColumn.setOption({
-              xAxis: {
-                  data: data.body.patient
-              },
-              series: [{
-                  name: '销量',
-                  data: data.body.total
-              }]
-          })
+      });
       });
 
-      this.chartBar.setOption({
+              this.chartBar = echarts.init(document.getElementById('chartBar'));
+        this.chartLine = echarts.init(document.getElementById('chartLine'));
+        this.chartPie = echarts.init(document.getElementById('chartPie'));
+this.chartBar.setOption({
         title: {
           text: 'Bar Chart',
           subtext: '数据来自网络'
@@ -239,21 +251,10 @@
             }
           }
         ]
-      });
+      });    
+      
     },
     methods: {
-      getOrder: function() {
-        this.$http.get("/ordapi/getOrdinThreeMonth").then(
-          function(response) {
-            this.threeMonthOrdData = response.body;
-            alert(this.threeMonthOrdData[0].total);
-          },
-          function() {
-            this.loading = false;
-            console.log("error");
-          }
-        );
-      },
     }
   }
 </script>
