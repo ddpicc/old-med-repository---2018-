@@ -80,16 +80,42 @@
 
 
     mounted: function () {
-      let _total = 0.00;
-      let _profit = 0.00;
+      let _totalFstMon = 0.00;
+      let _profitFstMon = 0.00;
+
+      let _totalSecMon = 0.00;
+      let _profitSecMon = 0.00;
+
+      let _totalTrdMon = 0.00;
+      let _profitTrdMon = 0.00;
+
+      let nowMonth = new Date().getMonth()+1;
       this.$http.get("/ordapi/getOrdinThreeMonth").then(function (data) {
         //alert(JSON.stringify(data.body));
         for(let item of data.body) {
-           _total = _total + item.total;
-          _profit = _profit + item.totalprofit;     
+          let tempMon = item.date.split('/')[1];
+          //alert(typeof(tempMon));
+          switch(tempMon){
+            case (nowMonth-2).toString():
+              _totalFstMon = _totalFstMon + item.total;
+              _profitFstMon = _profitFstMon + item.totalprofit;
+              break;
+            case (nowMonth-1).toString():
+              _totalSecMon = _totalSecMon + item.total;
+              _profitSecMon = _profitSecMon + item.totalprofit;
+              break;
+            case nowMonth.toString():
+              _totalTrdMon = _totalTrdMon + item.total;
+              _profitTrdMon = _profitTrdMon + item.totalprofit;
+              break;
+          }  
         }
-        _total = _total.toFixed(2);
-        _profit = _profit.toFixed(2);
+        _totalFstMon = _totalFstMon.toFixed(2);
+        _profitFstMon = _profitFstMon.toFixed(2);
+        _totalSecMon = _totalSecMon.toFixed(2);
+        _profitSecMon = _profitSecMon.toFixed(2);
+        _totalTrdMon = _totalTrdMon.toFixed(2);
+        _profitTrdMon = _profitTrdMon.toFixed(2);
         this.$nextTick( () => {
       //基于准备好的dom，初始化echarts实例
         this.chartColumn = echarts.init(document.getElementById('chartColumn'));
@@ -102,7 +128,7 @@
         },
         xAxis : [{
             type : 'category',
-            data : ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+            data : [(nowMonth-2)+'月', (nowMonth-1)+'月', nowMonth+'月', ]
         }],
         yAxis : [{
             type : 'value'
@@ -111,12 +137,12 @@
           {
             name: '总销量',
             type: 'bar',
-            data: [_total]
+            data: [_totalFstMon,_totalSecMon,_totalTrdMon]
           },
           {
             name: '总利润',
             type: 'bar',
-            data: [_profit]
+            data: [_profitFstMon,_profitSecMon,_profitTrdMon]
           }
         ]
       });

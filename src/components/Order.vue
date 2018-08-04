@@ -2,7 +2,7 @@
   <div class="order">
     <el-container>
       <el-container direction="vertical">
-        <el-input  placeholder="请输入关键字" icon="search"  class="search"  v-model="search" ></el-input>
+        <el-input  placeholder="请输入关键字" icon="search"  class="search" autofocus="true" v-model="search" ref="mark"></el-input>
         <el-table  :data="tables" height="450" style="width: 100%" width="1200">
           <el-table-column prop="medname" label="药品名称" ></el-table-column>
           <el-table-column prop="alias"   label="别名">  </el-table-column>
@@ -120,6 +120,7 @@ export default {
         }
         else
           alert("already exist");
+        this.$refs.mark.$el.querySelector('input').focus();
       },
 
       deleteline: function(index) {
@@ -187,16 +188,17 @@ export default {
       postOrdToDbSure:function(){
         let orderMed = [];
         let ordProfit = 0.00;
+        let ordBasePrice = 0.00;
         let mydate = new Date();
         for(let item of this.ordertb) {
-          //alert(JSON.stringify(item));
-          ordProfit = parseFloat((ordProfit + parseFloat((item.profit*item.number).toFixed(2))).toFixed(2));
+          ordBasePrice = parseFloat((ordBasePrice + parseFloat((item.baseprice*item.number).toFixed(2))).toFixed(2));
           orderMed.push({
             medname: item.medname,
             count: item.number,
           })
         }
-        ordProfit = parseFloat((ordProfit * this.dose).toFixed(2));
+        alert(parseFloat((ordBasePrice * this.dose).toFixed(2)));
+        ordProfit = (parseFloat(this.total) - parseFloat((ordBasePrice * this.dose).toFixed(2))).toFixed(2);
         var addOrd = [{
           patient :this.patient,
           orderalias: 'new',
@@ -205,7 +207,7 @@ export default {
           med : orderMed,
           dose : this.dose,
           total : parseFloat(this.total),
-          totalprofit : ordProfit,
+          totalprofit : parseFloat(ordProfit),
           editable: true,
         }];
 
