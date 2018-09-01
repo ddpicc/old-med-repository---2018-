@@ -197,7 +197,7 @@ export default {
             count: item.number,
           })
         }
-        alert(parseFloat((ordBasePrice * this.dose).toFixed(2)));
+        //alert(parseFloat((ordBasePrice * this.dose).toFixed(2)));
         ordProfit = (parseFloat(this.total) - parseFloat((ordBasePrice * this.dose).toFixed(2))).toFixed(2);
         var addOrd = [{
           patient :this.patient,

@@ -36,11 +36,12 @@ router.get("/getOrdinThreeMonth", (req, res) => {
   let nowdate = new Date();
   let startMon = nowdate.getFullYear() + '/' + (nowdate.getMonth()-1);
   let endMon = nowdate.getFullYear() + '/' + (nowdate.getMonth()+2);
-  console.log(startMon);
-  Ord.find({"date":{$gte: startMon,$lte: endMon}})
+  Ord.find({"date":{$gte: startMon,$lte: endMon},
+            "editable": false})
     .sort({ update_at: -1 })
     .then(heros => {
       res.json(heros);
+      console.log(heros);
     })
     .catch(err => {
       console.log(2);
