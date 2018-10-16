@@ -24,6 +24,10 @@
                             <i class="el-icon-setting"></i>
                             <span slot="title">订单管理</span>
                         </el-menu-item>
+                        <el-menu-item index="/CreateOrd">
+                            <i class="el-icon-menu"></i>
+                            <span slot="title">test生成订单</span>
+                        </el-menu-item>
                     </el-menu>
                 </div>
             </el-aside>

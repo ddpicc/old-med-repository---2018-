@@ -42,9 +42,14 @@ export default new Router({
       component: Login,
     },
     {
-      path: '/CreateOrd',
-      name: 'Create Order',
-      component: CreateOrd,
+      path: '/',
+      component: Home,
+      name: 'CreateOrd',
+      menuShow: true,
+      leaf: true, // 只有一个节点
+      children: [
+        {path: '/CreateOrd', component: CreateOrd, name: '生成订单', menuShow: true}
+      ]
     },
     {
       path: '/',

@@ -13,12 +13,16 @@
     </thead>
       <tfoot>
         <tr>
-        	<td colspan="4" class="rounded-foot-left"><em>每付价钱</em></td>
+        	<td colspan="5" class="rounded-foot-left"><em>每付价钱</em></td>
         	<td class="rounded-foot-right"><em>{{ordSellTotal}} 元</em> </td>
         </tr>
     	  <tr>
-        	<td colspan="4" class="rounded-foot-left"><el-input  placeholder="请输入多少付" v-model="orderCount" size="small" @focus="focus($event)"></el-input></td>
-        	<td class="rounded-foot-right"><em>合计  {{total}}</em> </td>
+          <td></td>
+          <td></td>
+          <td></td>
+        	<td class="inputCount"><input v-model="orderCount" @focus="focus($event)"></td>
+        	<td class="rounded-foot-right"><em>合计</em> </td>
+          <td> {{total}} </td>
         </tr>
         </tfoot>
     <tbody>
@@ -35,7 +39,7 @@
 <el-row>
   <div class="typein">
   <el-autocomplete
-      popper-class="my-autocomplete"
+      class="my-autocomplete"
       v-model="state2"
       autofocus
       :fetch-suggestions="querySearch"
@@ -280,6 +284,13 @@ body
 .typein
 {
   display:flex;
+  margin: 45px;
+  width: 1100px;
+}
+
+.inputCount
+{
+  width: 10px;
 }
 
 #rounded-corner
@@ -287,15 +298,11 @@ body
 	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
 	font-size: 12px;
 	margin: 45px;
-	width: 1000px;
+	width: 1100px;
 	text-align: left;
 	border-collapse: collapse;
 }
-#rounded-corner thead th.rounded-company
-{
-	background: #b9c9fe;
-}
-#rounded-corner thead th.rounded-q4
+#rounded-corner tbody 
 {
 	background: #b9c9fe;
 }
@@ -314,9 +321,11 @@ body
 	border-top: 1px solid #fff;
 	color: #669;
 }
+
 #rounded-corner tfoot td.rounded-foot-left
 {
 	background: #e8edff;
+
 }
 #rounded-corner tfoot td.rounded-foot-right
 {
