@@ -50,12 +50,6 @@
             width="150">
             </el-table-column>
             <el-table-column
-            prop="profit"
-            label="利润"
-            align="center"
-            width="150">
-            </el-table-column>
-            <el-table-column
             label="操作"
             align="center"
             width="200">
@@ -146,20 +140,6 @@
     <el-button type="primary" @click="modifySure">确 定</el-button>
   </div>
 </el-dialog>
-
-
-<!-- 添加图片 
-<el-dialog title="添加图片" :visible.sync="addpicVisible" class="addPicArea" @close="closePicAdd">
-  <el-form :model="addpicform">
-    <el-form-item label="图片地址" :label-width="formLabelWidth">
-      <el-input v-model="addpicform.url" auto-complete="off"></el-input>
-    </el-form-item>
-  </el-form>
-  <div slot="footer" class="dialog-footer">
-    <el-button @click="addpicVisible = false">取 消</el-button>
-    <el-button type="primary" @click="addpicSure">确 定</el-button>
-  </div>
-</el-dialog>-->
 
 <el-button type="primary" class="addBtn" @click="add" icon="el-icon-plus">添加</el-button>
   

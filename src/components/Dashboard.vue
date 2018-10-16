@@ -90,21 +90,32 @@
       let _profitTrdMon = 0.00;
 
       let nowMonth = new Date().getMonth()+1;
+      let firstMonth = (nowMonth-2) % 12;
+      if(firstMonth<10)
+        firstMonth = '0' + firstMonth;
+      let secondMonth = (nowMonth-1) % 12;
+      if(secondMonth<10)
+        secondMonth = '0' + secondMonth;
+      let thirdMonth = nowMonth % 12;
+      if(nowMonth<10)
+        thirdMonth = '0' + nowMonth;
       this.$http.get("/ordapi/getOrdinThreeMonth").then(function (data) {
-        //alert(JSON.stringify(data.body));
         for(let item of data.body) {
           let tempMon = item.date.split('/')[1];
-          //alert(typeof(tempMon));
+          tempMon = parseInt(tempMon);
+          firstMonth = parseInt(firstMonth);
+          secondMonth = parseInt(secondMonth);
+          thirdMonth = parseInt(thirdMonth);
           switch(tempMon){
-            case (nowMonth-2).toString():
+            case firstMonth:
               _totalFstMon = _totalFstMon + item.total;
               _profitFstMon = _profitFstMon + item.totalprofit;
               break;
-            case (nowMonth-1).toString():
+            case secondMonth:
               _totalSecMon = _totalSecMon + item.total;
               _profitSecMon = _profitSecMon + item.totalprofit;
               break;
-            case nowMonth.toString():
+            case thirdMonth:
               _totalTrdMon = _totalTrdMon + item.total;
               _profitTrdMon = _profitTrdMon + item.totalprofit;
               break;
@@ -121,7 +132,7 @@
         this.chartColumn = echarts.init(document.getElementById('chartColumn'));
 
       this.chartColumn.setOption({
-        title: { text: 'Column Chart' },
+        title: { text: '销售统计' },
         tooltip: {},
         legend: {
             data: ['总销量','总利润']
@@ -149,7 +160,7 @@
       });
       });
 
-              this.chartBar = echarts.init(document.getElementById('chartBar'));
+        this.chartBar = echarts.init(document.getElementById('chartBar'));
         this.chartLine = echarts.init(document.getElementById('chartLine'));
         this.chartPie = echarts.init(document.getElementById('chartPie'));
 this.chartBar.setOption({

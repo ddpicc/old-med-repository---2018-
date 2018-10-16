@@ -34,9 +34,18 @@ router.get("/order", (req, res) => {
  //查找最近三个月的订单
 router.get("/getOrdinThreeMonth", (req, res) => {
   let nowdate = new Date();
-  let startMon = nowdate.getFullYear() + '/' + (nowdate.getMonth()-1);
-  let endMon = nowdate.getFullYear() + '/' + (nowdate.getMonth()+2);
-  Ord.find({"date":{$gte: startMon,$lte: endMon},
+  let curmonth = (nowdate.getMonth()+1) % 12;
+  let startMon = (curmonth-2) % 12;
+  if(startMon<10)
+    startMon = '0' + startMon;
+  let endMon = (curmonth + 1) % 12;
+  if(endMon<10)
+    endMon = '0' + endMon;
+  let start = nowdate.getFullYear() + '/' + startMon;
+  let end = nowdate.getFullYear() + '/' + endMon;
+  console.log(start);
+  console.log(end);
+  Ord.find({"date":{$gte: start, $lte: end},
             "editable": false})
     .sort({ update_at: -1 })
     .then(heros => {

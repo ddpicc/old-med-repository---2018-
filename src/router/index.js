@@ -3,12 +3,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import List from '@/components/List'
-import Detail from '@/components/Detail'
 import Order from '@/components/Order'
 import Home from '@/components/home'
 import OrderManage from '@/components/OrderManage'
 import Login from '@/components/Login'
 import Dashboard from '@/components/Dashboard'
+import CreateOrd from '@/components/CreateOrder'
 
 
 Vue.use(Router)
@@ -42,9 +42,9 @@ export default new Router({
       component: Login,
     },
     {
-      path : '/league/:name',
-      name : 'Detail',
-      component : Detail
+      path: '/CreateOrd',
+      name: 'Create Order',
+      component: CreateOrd,
     },
     {
       path: '/',

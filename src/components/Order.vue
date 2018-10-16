@@ -18,7 +18,7 @@
         </el-table>
       </el-container>
       <el-container direction="vertical">
-        <el-table  :data="ordertb" height="400" border show-summary :summary-method="getSummary" style="width: 100%">
+        <el-table  :data="ordertb" height="400" border show-summary :summary-method="getSummary" class="ortb" style="width: 100%">
           <el-table-column  prop="medname" label="名称"></el-table-column>
           <el-table-column  label="数量">        
             <template slot-scope="scope">
@@ -190,6 +190,14 @@ export default {
         let ordProfit = 0.00;
         let ordBasePrice = 0.00;
         let mydate = new Date();
+        let dateary = mydate.toLocaleDateString().split('/');
+        if(dateary[1].length == 1){
+          dateary[1] = '0' + dateary[1];
+          mydate = dateary.join('/');
+        } else{
+          mydate = dateary.join('/');
+        }
+
         for(let item of this.ordertb) {
           ordBasePrice = parseFloat((ordBasePrice + parseFloat((item.baseprice*item.number).toFixed(2))).toFixed(2));
           orderMed.push({
@@ -203,7 +211,7 @@ export default {
           patient :this.patient,
           orderalias: 'new',
           address : this.address,
-          date : mydate.toLocaleDateString(),
+          date : mydate,
           med : orderMed,
           dose : this.dose,
           total : parseFloat(this.total),
@@ -261,6 +269,10 @@ export default {
 }
 .dose-input {
     display:flex;
+}
+
+.odtb {
+  height: 10px;
 }
 
 

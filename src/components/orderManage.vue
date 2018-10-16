@@ -1,6 +1,9 @@
 <template>
+<div class="ordermanage">
+  <el-input  placeholder="请输入关键字" icon="search"  class="search"  v-model="search" ></el-input>
   <el-table
-    :data="tableData5"
+    :data="tables"
+    :default-sort = "{prop: 'date', order: 'descending'}"
     style="width: 100%">
     <el-table-column type="expand">
       <template slot-scope="medscope">
@@ -28,12 +31,9 @@
       prop="total">
     </el-table-column>
     <el-table-column
-      label="总利润"
-      prop="totalprofit">
-    </el-table-column>
-    <el-table-column
+      prop="date"
       label="日期"
-      prop="date">
+      sortable>
     </el-table-column>
     <el-table-column
         label="操作">
@@ -43,6 +43,8 @@
         </template>
         </el-table-column>
   </el-table>
+  <el-button type="primary" class="addBtn" @click="add" icon="el-icon-plus">添加</el-button>
+</div>
 </template>
 
 <script>
@@ -50,7 +52,22 @@
     data: function() {
       return {
         tableData5: [],
-        medtable: []
+        medtable: [],
+        search: ''
+      }
+    },
+    
+    computed:{
+      tables:function(){
+        var search=this.search;
+        if(search){
+          return  this.tableData5.filter(function(dataNews){
+            return Object.keys(dataNews).some(function(key){
+              return String(dataNews[key]).toLowerCase().indexOf(search) > -1
+            })
+          })
+        }
+        return this.tableData5;
       }
     },
 
