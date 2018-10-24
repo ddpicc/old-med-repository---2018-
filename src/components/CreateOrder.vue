@@ -5,10 +5,13 @@
     	<tr>
         	<th scope="col" class="MedName1">药品名称</th>
             <th scope="col" class="MedNm1">数量</th>
+            <th> 操作</th>
             <th scope="col" class="MedName2">药品名称</th>
             <th scope="col" class="MedNm2">数量</th>
+            <th> 操作</th>
             <th scope="col" class="MedName3">药品名称</th>
             <th scope="col" class="MedNm3">数量</th>
+            <th> 操作</th>
         </tr>
     </thead>
       <tfoot>
@@ -26,13 +29,16 @@
         </tr>
         </tfoot>
     <tbody>
-    	<tr v-for="item in items" :key="item.id">
+    	<tr v-for="(item, index) in items" :key="item.id">
         	<td> {{item.MedName1}} </td>
             <td> {{item.MedNm1}} </td>
+            <td> <i class="el-icon-delete" @click="deleteMed(index)"></i> </td>
             <td> {{item.MedName2}} </td>
             <td> {{item.MedNm2}} </td>
+            <td> <i class="el-icon-delete" @click="deleteMed(index)"></i> </td>
             <td> {{item.MedName3}} </td>
             <td> {{item.MedNm3}} </td>
+            <td> <i class="el-icon-delete" @click="deleteMed(index)"></i> </td>
         </tr>
     </tbody>
 </table>
@@ -59,7 +65,7 @@
       ref="mark"
       @focus="focus($event)">
     </el-input>
-    <el-button type="success" size="small" @click="add" round>生成订单</el-button>
+    <el-button type="success" size="small" @click="postOrdToDbSure" round>生成订单</el-button>
   </div>
 </el-row>
 </div>
@@ -83,9 +89,6 @@
       }
     },
     methods: {
-      add: function() {
-        this.items.push({MedName1:'google', MedNm1:5});
-      },
       moveFocusToDose: function(){
         let searchStr = this.state2;
         if(searchStr === ""){
@@ -112,6 +115,10 @@
         }
         //move focus to input dose
         this.$refs.mark.$el.querySelector('input').focus();
+      },
+
+      deleteMed(index){
+        alert(index);
       },
 
       postToTb: function(){
@@ -176,7 +183,7 @@
       focus(event) {
         event.currentTarget.select();
       },
-    querySearch(queryString, cb) {
+      querySearch(queryString, cb) {
         var allMeds = this.medsToShow;
         var results = queryString ? allMeds.filter(this.createFilter(queryString)) : allMeds;
         // 调用 callback 返回建议列表的数据
@@ -195,9 +202,6 @@
         this.$http.get("/medapi/hero").then(
           function(response) {
             this.loading = false;
-            //this.medsFromDB = response.body;
-            //alert(response.body["0"].medname);
-            //alert(response.body.length);
             //load the med name and alias to the filter
             for (let i=0;i<response.body.length;i++){
               this.medsToShow.push(
@@ -215,22 +219,68 @@
             console.log("error");
           }
         );
+      },
+
+      postOrdToDbSure:function(){
+        alert("sdsdsd");
+        let orderToDb = [];
+        let ordProfit = 0.00;
+        let mydate = new Date();
+        let dateary = mydate.toLocaleDateString().split('/');
+        if(dateary[1].length == 1){
+          dateary[1] = '0' + dateary[1];
+          mydate = dateary.join('/');
+        } else{
+          mydate = dateary.join('/');
+        }
+
+        for(let item of this.orderMed) {
+          //ordBasePrice = parseFloat((ordBasePrice + parseFloat((item.baseprice*item.number).toFixed(2))).toFixed(2));
+          orderToDb.push({
+            medname: item.medname,
+            count: item.count,
+          })
+        }
+        ordProfit = (this.ordSellTotal - this.ordBaseTotal).toFixed(2);
+        var addOrd = [{
+          patient :this.patient,
+          orderalias: 'new',
+          address : this.address,
+          date : mydate,
+          med : orderToDb,
+          dose : this.dose,
+          total : parseFloat(this.ordSellTotal),
+          totalprofit : parseFloat(ordProfit),
+          editable: true,
+        }];
+
+        this.$http.post("/ordapi/order", addOrd).then(
+          function(response) {
+            if (response.ok) {
+              this.$message({
+                message: "添加成功",
+                type: "success"
+              });
+            }
+            this.loading = true;
+          },
+          function() {
+            // this.loading = false;
+          }
+        );
+        this.items = [];
+        this.orderMed = [];
+        this.orderCount = '';
+        this.total = '';
+        this.state2 = '';
+        this.ordSellTotal = 0;
+        this.ordBaseTotal = 0;
+        this.inputDose = 1;
+        this.newLine = true;
+        this.curCountPerLine = 1;
       }
     },
     watch: {
-      items: function(curVal,oldVal) {
-        /* alert(this.items[this.items.length-1].MedName1);
-        let medName = this.state2;
-        let medDose = this.inputDose;
-        let newArr = this.medsToShow.find(function(p){
-            return p.value === medName;
-        });
-        alert(JSON.stringify(newArr));
-        let basePriceOfMed = newArr.baseprice;
-        let sellPriceOfMed = newArr.sellprice;
-        this.ordBaseTotal = parseFloat((this.ordBaseTotal + parseFloat((basePriceOfMed*medDose).toFixed(2))).toFixed(2));
-        this.ordSellTotal = parseFloat((this.ordSellTotal + parseFloat((sellPriceOfMed*medDose).toFixed(2))).toFixed(2)); */
-      },
       orderMed: function(){
         for(let item of this.orderMed) {
           let basePriceOfMed = item.baseprice;
@@ -248,7 +298,7 @@
         if(val != ''){
           this.orderCount = val;
         }
-        let temp = this.ordSellTotal * this.orderCount;
+        let temp = (this.ordSellTotal * this.orderCount).toFixed(2);
         temp += ' 元';
         this.total = temp;
       }, 

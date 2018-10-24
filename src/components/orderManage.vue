@@ -43,7 +43,7 @@
         </template>
         </el-table-column>
   </el-table>
-  <el-button type="primary" class="addBtn" @click="add" icon="el-icon-plus">添加</el-button>
+  <el-button type="primary" class="addBtn" @click="addInventory" icon="el-icon-plus">添加</el-button>
 </div>
 </template>
 
@@ -74,6 +74,10 @@
     methods: {
       indexMethod(index) {
         return index + 1;
+      },
+
+      addInventory: function() {
+        //todo
       },
 
       getAll: function() {
