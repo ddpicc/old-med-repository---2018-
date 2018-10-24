@@ -5,13 +5,13 @@
     	<tr>
         	<th scope="col" class="MedName1">药品名称</th>
             <th scope="col" class="MedNm1">数量</th>
-            <th> 操作</th>
+            <th v-if="allowEdit"> 操作</th>
             <th scope="col" class="MedName2">药品名称</th>
             <th scope="col" class="MedNm2">数量</th>
-            <th> 操作</th>
+            <th v-if="allowEdit"> 操作</th>
             <th scope="col" class="MedName3">药品名称</th>
             <th scope="col" class="MedNm3">数量</th>
-            <th> 操作</th>
+            <th v-if="allowEdit"> 操作</th>
         </tr>
     </thead>
       <tfoot>
@@ -32,13 +32,13 @@
     	<tr v-for="(item, index) in items" :key="item.id">
         	<td> {{item.MedName1}} </td>
             <td> {{item.MedNm1}} </td>
-            <td> <i class="el-icon-delete" @click="deleteMed(index)"></i> </td>
+            <td> <i class="el-icon-delete" v-if="allowEdit" @click="deleteFirstMed(index)"></i> </td>
             <td> {{item.MedName2}} </td>
             <td> {{item.MedNm2}} </td>
-            <td> <i class="el-icon-delete" @click="deleteMed(index)"></i> </td>
+            <td> <i class="el-icon-delete" v-if="allowEdit"  @click="deleteSecondMed(index)"></i> </td>
             <td> {{item.MedName3}} </td>
             <td> {{item.MedNm3}} </td>
-            <td> <i class="el-icon-delete" @click="deleteMed(index)"></i> </td>
+            <td> <i class="el-icon-delete" v-if="allowEdit" @click="deleteThirdMed(index)"></i> </td>
         </tr>
     </tbody>
 </table>
@@ -65,9 +65,12 @@
       ref="mark"
       @focus="focus($event)">
     </el-input>
-    <el-button type="success" size="small" @click="postOrdToDbSure" round>生成订单</el-button>
   </div>
 </el-row>
+<span>
+  <el-button type="success" size="small" v-if="enableEditButton" @click="switchAllowEdit" round>{{editButtonText}}</el-button>
+  <el-button type="success" size="small" @click="postOrdToDbSure" round>确认</el-button>
+</span>
 </div>
 </template>
 
@@ -85,7 +88,10 @@
           ordBaseTotal: 0,
           ordSellTotal: 0,
           orderCount: '',
-          total: ''
+          total: '',
+          allowEdit: false,
+          editButtonText: '编辑',
+          enableEditButton: false
       }
     },
     methods: {
@@ -117,8 +123,39 @@
         this.$refs.mark.$el.querySelector('input').focus();
       },
 
-      deleteMed(index){
+      switchAllowEdit: function(){
+        if(this.allowEdit == false){
+          this.allowEdit = true;
+          this.editButtonText = '退出编辑';
+        }
+        else{
+          this.allowEdit = false;
+          this.editButtonText = '编辑';
+        }
+        
+
+      },
+
+      deleteFirstMed(index){
         alert(index);
+      },
+
+      deleteSecondMed(index){
+        alert(this.items[index].MedName2);
+        if(this.curCountPerLine == 3){
+          alert("in");
+          this.$set(this.items[index],"MedName2", this.items[index].MedName3);
+          this.$set(this.items[index],"MedNm2", this.items[index].MedNm3);
+          delete this.items[index].MedName3;
+          delete this.items[index].MedNm3;
+          this.curCountPerLine = this.curCountPerLine - 1;
+          
+          let indexToDel = index * 3 + 1;
+          this
+        }
+        else if(this.curCountPerLine == 2){
+
+        }
       },
 
       postToTb: function(){
@@ -159,13 +196,16 @@
             this.$set(this.items[this.items.length-1],"MedName3", this.state2);
             this.$set(this.items[this.items.length-1],"MedNm3", this.inputDose);
             this.newLine = true;
-            this.curCountPerLine = 1
+            this.curCountPerLine = this.curCountPerLine + 1;
           }
         }
         else{
           this.items.push({MedName1:this.state2, MedNm1:this.inputDose});
           this.newLine = false;
+          this.curCountPerLine = 1;
         }
+
+        this.enableEditButton = true;
 
         //update orderMed
         this.orderMed.push({
