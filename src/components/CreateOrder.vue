@@ -3,43 +3,43 @@
 <table id="rounded-corner" summary="2007 Major IT Companies' Profit">
     <thead>
     	<tr>
-        	<th scope="col" class="MedName1">药品名称</th>
-            <th scope="col" class="MedNm1">数量</th>
-            <th v-if="allowEdit"> 操作</th>
-            <th scope="col" class="MedName2">药品名称</th>
-            <th scope="col" class="MedNm2">数量</th>
-            <th v-if="allowEdit"> 操作</th>
-            <th scope="col" class="MedName3">药品名称</th>
-            <th scope="col" class="MedNm3">数量</th>
-            <th v-if="allowEdit"> 操作</th>
-        </tr>
+        	<th scope="col" class="MedName1"> 药品名称</th>
+          <th scope="col" class="MedNm1"> 数量</th>
+          <th scope="col"> 操作</th>
+          <th scope="col" class="MedName2"> 药品名称</th>
+          <th scope="col" class="MedNm2"> 数量</th>
+          <th scope="col"> 操作</th>
+          <th scope="col" class="MedName3"> 药品名称</th>
+          <th scope="col" class="MedNm3"> 数量</th>
+          <th scope="col"> 操作</th>
+      </tr>
     </thead>
       <tfoot>
         <tr>
-        	<td colspan="5" class="rounded-foot-left"><em>每付价钱</em></td>
-        	<td class="rounded-foot-right"><em>{{ordSellTotal}} 元</em> </td>
+        	<td colspan="5" class="rounded-foot-left">每付价钱</td>
+        	<td class="rounded-foot-right">{{ordSellTotal}} 元 </td>
         </tr>
     	  <tr>
           <td></td>
           <td></td>
           <td></td>
-        	<td class="inputCount"><input v-model="orderCount" @focus="focus($event)"></td>
-        	<td class="rounded-foot-right"><em>合计</em> </td>
+        	<td class="inputCount"> <input v-model="orderCount" @focus="focus($event)"> </td>
+        	<td class="rounded-foot-right">合计 </td>
           <td> {{total}} </td>
         </tr>
-        </tfoot>
+      </tfoot>
     <tbody>
     	<tr v-for="(item, index) in items" :key="item.id">
         	<td> {{item.MedName1}} </td>
-            <td> {{item.MedNm1}} </td>
-            <td> <i class="el-icon-delete" v-if="allowEdit" @click="deleteFirstMed(index)"></i> </td>
-            <td> {{item.MedName2}} </td>
-            <td> {{item.MedNm2}} </td>
-            <td> <i class="el-icon-delete" v-if="allowEdit"  @click="deleteSecondMed(index)"></i> </td>
-            <td> {{item.MedName3}} </td>
-            <td> {{item.MedNm3}} </td>
-            <td> <i class="el-icon-delete" v-if="allowEdit" @click="deleteThirdMed(index)"></i> </td>
-        </tr>
+          <td> {{item.MedNm1}} </td>
+          <td> <i class="el-icon-delete" @click="deleteFirstMed(index)"></i> </td>
+          <td> {{item.MedName2}} </td>
+          <td> {{item.MedNm2}} </td>
+          <td> <i class="el-icon-delete" @click="deleteSecondMed(index)"></i> </td>
+          <td> {{item.MedName3}} </td>
+          <td> {{item.MedNm3}} </td>
+          <td> <i class="el-icon-delete" @click="deleteThirdMed(index)"></i> </td>
+      </tr>
     </tbody>
 </table>
 <el-row>
@@ -67,8 +67,7 @@
     </el-input>
   </div>
 </el-row>
-<span>
-  <el-button type="success" size="small" v-if="enableEditButton" @click="switchAllowEdit" round>{{editButtonText}}</el-button>
+<span class="confirmButton">
   <el-button type="success" size="small" @click="postOrdToDbSure" round>确认</el-button>
 </span>
 </div>
@@ -88,10 +87,7 @@
           ordBaseTotal: 0,
           ordSellTotal: 0,
           orderCount: '',
-          total: '',
-          allowEdit: false,
-          editButtonText: '编辑',
-          enableEditButton: false
+          total: ''
       }
     },
     methods: {
@@ -106,6 +102,7 @@
         let existInDb = this.medsToShow.find(function(p){
             return p.value === searchStr;
         });
+
         if(typeof(existInDb)=="undefined"){
             alert("药品库中没有这种药，请重输");
             return;
@@ -123,37 +120,32 @@
         this.$refs.mark.$el.querySelector('input').focus();
       },
 
-      switchAllowEdit: function(){
-        if(this.allowEdit == false){
-          this.allowEdit = true;
-          this.editButtonText = '退出编辑';
-        }
-        else{
-          this.allowEdit = false;
-          this.editButtonText = '编辑';
-        }
-        
-
-      },
 
       deleteFirstMed(index){
         alert(index);
       },
 
       deleteSecondMed(index){
-        alert(this.items[index].MedName2);
+        //alert(this.items[index].MedName2);
         if(this.curCountPerLine == 3){
-          alert("in");
+          //alert("in");
           this.$set(this.items[index],"MedName2", this.items[index].MedName3);
           this.$set(this.items[index],"MedNm2", this.items[index].MedNm3);
           delete this.items[index].MedName3;
           delete this.items[index].MedNm3;
           this.curCountPerLine = this.curCountPerLine - 1;
+          this.newLine = false;
           
           let indexToDel = index * 3 + 1;
-          this
+          //alert(JSON.stringify(this.orderMed));
+          this.orderMed.splice(indexToDel,1);
+          //alert(JSON.stringify(this.orderMed));
+          //alert(this.orderMed[indexToDel].medname);
         }
         else if(this.curCountPerLine == 2){
+
+        }
+        else if(this.curCountPerLine == 1){
 
         }
       },
@@ -322,6 +314,8 @@
     },
     watch: {
       orderMed: function(){
+        this.ordBaseTotal = 0;
+        this.ordSellTotal = 0;
         for(let item of this.orderMed) {
           let basePriceOfMed = item.baseprice;
           let sellPriceOfMed = item.sellprice;
@@ -381,6 +375,13 @@ body
 .inputCount
 {
   width: 10px;
+}
+
+.confirmbutton
+{
+  margin: 45px;
+  width: 1100px;
+  align-content: right;
 }
 
 #rounded-corner
