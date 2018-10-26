@@ -1,12 +1,9 @@
 <template>
+<div>
   <el-row class="warp">
     <el-col :span="24" class="warp-breadcrum">
-      <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/' }"><b>首页</b></el-breadcrumb-item>
-      </el-breadcrumb>
+      <el-button type="text" @click="openStatement">流水详情 </el-button>
     </el-col>
-
-
 
     <el-col :span="24" class="warp-main">
       <section class="chart-container">
@@ -28,40 +25,32 @@
 
     </el-col>
   </el-row>
+
+  <el-dialog title="流水详情" center :visible.sync="dialogStatementVisible"  @close='closeDialog'>
+    <span class="dataSelector">
+      <el-date-picker
+        v-model="dateValue"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        :picker-options="pickerOptions0"
+        @change="dateChange"
+        :default-time="['23:59:59', '23:59:59']">>
+      </el-date-picker>
+    </span>
+    <el-table  :data="threeMonthOrdData" height="800" style="width: 100%" width="900">
+      <el-table-column prop="mednameFirst" label="日期" width="100"></el-table-column>
+      <el-table-column prop="countFirst" label="名称" width="400">  </el-table-column>
+      <el-table-column prop="countFirst" label="价钱" width="100">  </el-table-column>
+    </el-table>
+    <div class="order-input">
+      <el-button type="success" size="small" @click="printStatement" round> 打印</el-button>
+      <el-button type="success" size="small" @click="closeDialog" round>取消</el-button>
+    </div>
+  </el-dialog>
+</div>
 </template>
-<style>
-  .time {
-    font-size: 13px;
-    color: #999;
-  }
-
-  .bottom {
-    margin-top: 13px;
-    line-height: 12px;
-  }
-
-  .image {
-    width: 100%;
-    display: block;
-  }
-
-  .clearfix:before,
-  .clearfix:after {
-    display: table;
-    content: "";
-  }
-
-  .clearfix:after {
-    clear: both
-  }
-
-  .chart-container {
-    width: 100%;
-  }
-  .chart-container .el-col {
-    padding: 30px 20px;
-  }
-</style>
 
 <script>
   import echarts from 'echarts'
@@ -74,7 +63,15 @@
         chartBar: null,
         chartLine: null,
         chartPie: null,
-        threeMonthOrdData: []
+        threeMonthOrdData: [],
+        dialogStatementVisible: false,
+        statementData: [],
+        dateValue: '',
+        pickerOptions0: {
+          disabledDate(time) {
+            return time.getTime() > Date.now();
+          }
+        },  
       };
     },
 
@@ -292,6 +289,102 @@ this.chartBar.setOption({
       
     },
     methods: {
+      openStatement: function(){
+        this.dialogStatementVisible = true;
+      },
+
+      closeDialog: function(){
+        this.statementData = [];//清空数据
+        this.dialogStatementVisible = false;
+      },
+
+      dateChange: function(){
+        //alert(this.dateValue);
+        let dateRange = JSON.stringify(this.dateValue);
+        //alert(typeof(dateRange));
+        let start = dateRange.split(',');
+        alert(start);
+      },
+
+      printStatement: function(){
+
+      }
     }
   }
 </script>
+
+<style>
+
+.time {
+  font-size: 13px;
+  color: #999;
+}
+
+.bottom {
+  margin-top: 13px;
+  line-height: 12px;
+}
+
+.image {
+  width: 100%;
+  display: block;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both
+}
+
+.chart-container {
+  width: 100%;
+}
+.chart-container .el-col {
+  padding: 30px 20px;
+}
+#rounded-corner
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	margin: 45px;
+	text-align: left;
+	border-collapse: collapse;
+}
+#rounded-corner tbody 
+{
+	background: #b9c9fe;
+}
+#rounded-corner th
+{
+	padding: 8px;
+	font-weight: normal;
+	font-size: 13px;
+	color: #039;
+	background: #b9c9fe;
+}
+#rounded-corner td
+{
+	padding: 8px;
+	background: #e8edff;
+	border-top: 1px solid #fff;
+	color: #669;
+}
+
+#rounded-corner tfoot td.rounded-foot-left
+{
+	background: #e8edff;
+
+}
+#rounded-corner tfoot td.rounded-foot-right
+{
+	background: #e8edff;
+}
+#rounded-corner tbody tr:hover td
+{
+	background: #d0dafd;
+}
+</style>

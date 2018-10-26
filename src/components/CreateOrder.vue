@@ -16,13 +16,12 @@
     </thead>
       <tfoot>
         <tr>
-        	<td colspan="5" class="rounded-foot-left">每付价钱</td>
+        	<td colspan="7"> </td>
+          <td class="rounded-foot-left">每付价钱</td>
         	<td class="rounded-foot-right">{{ordSellTotal}} 元 </td>
         </tr>
     	  <tr>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td colspan="6"></td>
         	<td class="inputCount"> <input v-model="orderCount" @focus="focus($event)"> </td>
         	<td class="rounded-foot-right">合计 </td>
           <td> {{total}} </td>
@@ -32,13 +31,13 @@
     	<tr v-for="(item, index) in items" :key="item.id">
         	<td> {{item.MedName1}} </td>
           <td> {{item.MedNm1}} </td>
-          <td> <i class="el-icon-delete" @click="deleteFirstMed(index)"></i> </td>
+          <td> <i class="el-icon-delete" @click="deleteMed(index)"></i> </td>
           <td> {{item.MedName2}} </td>
           <td> {{item.MedNm2}} </td>
-          <td> <i class="el-icon-delete" @click="deleteSecondMed(index)"></i> </td>
+          <td> <i class="el-icon-delete" @click="deleteMed(index)"></i> </td>
           <td> {{item.MedName3}} </td>
           <td> {{item.MedNm3}} </td>
-          <td> <i class="el-icon-delete" @click="deleteThirdMed(index)"></i> </td>
+          <td> <i class="el-icon-delete" @click="deleteMed(index)"></i> </td>
       </tr>
     </tbody>
 </table>
@@ -67,6 +66,9 @@
     </el-input>
   </div>
 </el-row>
+<el-row class="patientName">
+  <el-input  placeholder="请输入病人名字" v-model="patient"></el-input>
+</el-row>
 <span class="confirmButton">
   <el-button type="success" size="small" @click="postOrdToDbSure" round>确认</el-button>
 </span>
@@ -87,7 +89,8 @@
           ordBaseTotal: 0,
           ordSellTotal: 0,
           orderCount: '',
-          total: ''
+          total: '',
+          patient: ''
       }
     },
     methods: {
@@ -120,33 +123,33 @@
         this.$refs.mark.$el.querySelector('input').focus();
       },
 
-
-      deleteFirstMed(index){
-        alert(index);
-      },
-
-      deleteSecondMed(index){
+      deleteMed(index){
         //alert(this.items[index].MedName2);
-        if(this.curCountPerLine == 3){
-          //alert("in");
-          this.$set(this.items[index],"MedName2", this.items[index].MedName3);
-          this.$set(this.items[index],"MedNm2", this.items[index].MedNm3);
-          delete this.items[index].MedName3;
-          delete this.items[index].MedNm3;
-          this.curCountPerLine = this.curCountPerLine - 1;
-          this.newLine = false;
-          
-          let indexToDel = index * 3 + 1;
-          //alert(JSON.stringify(this.orderMed));
-          this.orderMed.splice(indexToDel,1);
-          //alert(JSON.stringify(this.orderMed));
-          //alert(this.orderMed[indexToDel].medname);
-        }
-        else if(this.curCountPerLine == 2){
+        let indexToDel = index * 3 + 1;
+        this.orderMed.splice(indexToDel,1);
+        this.curCountPerLine = 1;
+        this.newLine = true;
+        this.items = [];
 
-        }
-        else if(this.curCountPerLine == 1){
-
+        for(let item of this.orderMed){
+          if(this.newLine == false){
+            if(this.curCountPerLine == 1){
+              this.$set(this.items[this.items.length-1],"MedName2", item.medname);
+              this.$set(this.items[this.items.length-1],"MedNm2", item.count);
+              this.curCountPerLine = this.curCountPerLine + 1;
+            }
+            else if(this.curCountPerLine == 2){
+              this.$set(this.items[this.items.length-1],"MedName3", item.medname);
+              this.$set(this.items[this.items.length-1],"MedNm3", item.count);
+              this.newLine = true;
+              this.curCountPerLine = this.curCountPerLine + 1;
+            }
+          }
+          else{
+            this.items.push({MedName1:item.medname, MedNm1:item.count});
+            this.newLine = false;
+            this.curCountPerLine = 1;
+          }
         }
       },
 
@@ -196,8 +199,6 @@
           this.newLine = false;
           this.curCountPerLine = 1;
         }
-
-        this.enableEditButton = true;
 
         //update orderMed
         this.orderMed.push({
@@ -254,7 +255,6 @@
       },
 
       postOrdToDbSure:function(){
-        alert("sdsdsd");
         let orderToDb = [];
         let ordProfit = 0.00;
         let mydate = new Date();
@@ -267,7 +267,6 @@
         }
 
         for(let item of this.orderMed) {
-          //ordBasePrice = parseFloat((ordBasePrice + parseFloat((item.baseprice*item.number).toFixed(2))).toFixed(2));
           orderToDb.push({
             medname: item.medname,
             count: item.count,
@@ -280,11 +279,13 @@
           address : this.address,
           date : mydate,
           med : orderToDb,
-          dose : this.dose,
+          dose : this.orderCount,
           total : parseFloat(this.ordSellTotal),
           totalprofit : parseFloat(ordProfit),
           editable: true,
         }];
+
+        alert(JSON.stringify(addOrd));
 
         this.$http.post("/ordapi/order", addOrd).then(
           function(response) {
@@ -310,6 +311,7 @@
         this.inputDose = 1;
         this.newLine = true;
         this.curCountPerLine = 1;
+        this.patient = ''
       }
     },
     watch: {
@@ -370,6 +372,7 @@ body
   display:flex;
   margin: 45px;
   width: 1100px;
+  margin-bottom: 20px;
 }
 
 .inputCount
@@ -382,6 +385,12 @@ body
   margin: 45px;
   width: 1100px;
   align-content: right;
+}
+
+.patientName{
+  margin: 45px;
+  margin-top: 20px;
+  width: 1100px;
 }
 
 #rounded-corner
