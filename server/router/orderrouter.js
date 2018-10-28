@@ -59,6 +59,36 @@ router.get("/getOrdinThreeMonth", (req, res) => {
   }
 );
 
+
+//查找一个date range的订单
+/*router.get("/getOrderStatement", (req, res) => {
+  console.log(req.params.startDate);
+  console.log(req.body);
+  if(startMon<10)
+    startMon = '0' + startMon;
+  let endMon = (curmonth + 1) % 12;
+  if(endMon<10)
+    endMon = '0' + endMon;
+  let start = nowdate.getFullYear() + '/' + startMon;
+  let end = nowdate.getFullYear() + '/' + endMon;
+  console.log(start);
+  console.log(end);
+  Ord.find({"date":{$gte: start, $lte: end},
+            "editable": false})
+    .sort({ update_at: -1 })
+    .then(heros => {
+      res.json(heros);
+      console.log(heros);
+    })
+    .catch(err => {
+      console.log(2);
+      res.json(err);
+    });
+  }
+}
+);*/
+
+
   //删除一条订单数据
 router.delete("/order/:id", (req, res) => {
   Ord.findOneAndRemove({

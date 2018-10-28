@@ -39,10 +39,10 @@
         :default-time="['23:59:59', '23:59:59']">>
       </el-date-picker>
     </span>
-    <el-table  :data="threeMonthOrdData" height="800" style="width: 100%" width="900">
-      <el-table-column prop="mednameFirst" label="日期" width="100"></el-table-column>
-      <el-table-column prop="countFirst" label="名称" width="400">  </el-table-column>
-      <el-table-column prop="countFirst" label="价钱" width="100">  </el-table-column>
+    <el-table  :data="statementData" height="800" style="width: 100%" width="900">
+      <el-table-column prop="date" label="日期" width="100"></el-table-column>
+      <el-table-column prop="patient" label="名称" width="400">  </el-table-column>
+      <el-table-column prop="total" label="价钱" width="100">  </el-table-column>
     </el-table>
     <div class="order-input">
       <el-button type="success" size="small" @click="printStatement" round> 打印</el-button>
@@ -299,11 +299,41 @@ this.chartBar.setOption({
       },
 
       dateChange: function(){
-        //alert(this.dateValue);
-        let dateRange = JSON.stringify(this.dateValue);
-        //alert(typeof(dateRange));
-        let start = dateRange.split(',');
-        alert(start);
+        var tempMon = this.dateValue[0].getMonth()+1;
+        if(tempMon < 10)
+          tempMon = '0' + tempMon;
+        var tempYear = this.dateValue[0].getFullYear();
+        var tempDay = this.dateValue[0].getDate();
+        if(tempDay < 10)
+          tempDay = '0' + tempDay;
+        var start = tempYear + '/' + tempMon + '/' + tempDay;
+        //alert(start);
+
+        tempMon = this.dateValue[1].getMonth()+1;
+        if(tempMon < 10)
+          tempMon = '0' + tempMon;
+        tempYear = this.dateValue[1].getFullYear();
+        tempDay = this.dateValue[1].getDate();
+        if(tempDay < 10)
+          tempDay = '0' + tempDay;
+        var end = tempYear + '/' + tempMon + '/' + tempDay;
+        //alert(end);
+        var dateRange = {
+          startDate: start,
+          endDate: end,
+          };
+
+        this.$http.get("/ordapi/getOrderStatement", {params:dateRange})
+        .then(
+          function(response) {
+            this.loading = false;
+            this.statementData = response.body;
+          },
+          function() {
+            this.loading = false;
+            console.log("error");
+          }
+        );
       },
 
       printStatement: function(){

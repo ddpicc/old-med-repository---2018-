@@ -66,6 +66,12 @@
     </el-input>
   </div>
 </el-row>
+<el-row class="medInfo">
+  <el-tag type="success" style="width:20%">库存</el-tag>
+  <el-tag type="success" style="width:20%">{{remainInv}}</el-tag>
+  <el-tag type="success" style="width:20%">单价</el-tag>
+  <el-tag type="success" style="width:20%">{{singlePrice}}</el-tag>
+</el-row>
 <el-row class="patientName">
   <el-input  placeholder="请输入病人名字" v-model="patient"></el-input>
 </el-row>
@@ -90,7 +96,10 @@
           ordSellTotal: 0,
           orderCount: '',
           total: '',
-          patient: ''
+          patient: '',
+          remainInv: '',
+          singlePrice: ''
+
       }
     },
     methods: {
@@ -119,6 +128,9 @@
             alert("不能重复添加药品");
             return;
         }
+
+        this.remainInv = existInDb.inventory;
+        this.singlePrice = existInDb.sellprice;
         //move focus to input dose
         this.$refs.mark.$el.querySelector('input').focus();
       },
@@ -242,7 +254,8 @@
                     "value": response.body[i].medname,
                     "alias":  response.body[i].alias,
                     "baseprice": response.body[i].baseprice,
-                    "sellprice": response.body[i].sellprice
+                    "sellprice": response.body[i].sellprice,
+                    "inventory": response.body[i].count
                   }
               );
             }
@@ -312,6 +325,8 @@
         this.newLine = true;
         this.curCountPerLine = 1;
         this.patient = ''
+        this.inventory = '';
+        this.singlePrice = ''
       }
     },
     watch: {
@@ -391,6 +406,17 @@ body
   margin: 45px;
   margin-top: 20px;
   width: 1100px;
+}
+
+.my-autocomplete{
+  width: 1500px;
+  margin-bottom: 0px;
+}
+
+.medInfo{
+  width: 1100px;
+  margin: 45px;
+  margin-top: 0px;
 }
 
 #rounded-corner
