@@ -323,14 +323,12 @@ this.chartBar.setOption({
           endDate: end,
           };
 
-        this.$http.get("/ordapi/getOrderStatement", {params:dateRange})
+        this.axios.get("/ordapi/getOrderStatement", {params:dateRange})
         .then(
           function(response) {
-            this.loading = false;
             this.statementData = response.body;
           },
           function() {
-            this.loading = false;
             console.log("error");
           }
         );

@@ -59,10 +59,10 @@ router.get("/getOrdinThreeMonth", (req, res) => {
   }
 );
 
-
 //查找一个date range的订单
-/*router.get("/getOrderStatement", (req, res) => {
-  console.log(req.params.startDate);
+router.get("/getOrderStatement", (req, res) => {
+  console.log(req.query);
+  /*console.log(req.params.startDate);
   console.log(req.body);
   if(startMon<10)
     startMon = '0' + startMon;
@@ -84,9 +84,10 @@ router.get("/getOrdinThreeMonth", (req, res) => {
       console.log(2);
       res.json(err);
     });
-  }
+  }*/
+  console.log("get order request");
 }
-);*/
+);
 
 
   //删除一条订单数据

@@ -4,6 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import VueResource from 'vue-resource'
+import axios from 'axios'
+import Qs from 'qs'
 
 //引入element组件化框架
 import ElementUI from "element-ui"
@@ -13,7 +15,9 @@ Vue.config.productionTip = false
 
 
 Vue.use(ElementUI);
-Vue.use(VueResource)
+Vue.use(VueResource);
+Vue.prototype.axios = axios;
+Vue.prototype.qs = Qs;
 
 /* eslint-disable no-new */
 new Vue({
