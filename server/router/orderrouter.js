@@ -117,14 +117,47 @@ router.put("/order", (req, res) => {
   arr = req.body.medary;
   arr.forEach(element => {
     //console.log(element.medname);
-    Med.findOneAndUpdate({
-      medname: element.medname},
-      {$inc: {count: -1*element.count*dose}})
-      .then(hero => console.log('update count -' + element.medname))
-      .catch(err => {
-        errstr = err;
-        console.log(err);
-      });
+    var tempMedname;
+    var tempChangeCount;
+    var index=0;
+    while(index<4){
+      if(index == 0){
+        if(typeof(element.medname1) == "undefined")
+          break;
+        tempMedname = element.medname1;
+        tempChangeCount = -1*element.count1*dose
+        index = index + 1;
+      }
+      else if(index==1){
+        if(typeof(element.medname2) == "undefined")
+          break;
+        tempMedname = element.medname2;
+        tempChangeCount = -1*element.count2*dose
+        index = index + 1;
+      }
+      else if(index==2){
+        if(typeof(element.medname3) == "undefined")
+          break;
+        tempMedname = element.medname3;
+        tempChangeCount = -1*element.count3*dose
+        index = index + 1;
+      }
+      else if(index==3){
+        if(typeof(element.medname4) == "undefined")
+          break;
+        tempMedname = element.medname4;
+        tempChangeCount = -1*element.count4*dose
+        index = index + 1;
+      }
+      console.log(tempMedname + '  count change:' +  tempChangeCount);
+      Med.findOneAndUpdate({
+        medname: tempMedname},
+        {$inc: {count: tempChangeCount}})
+        .catch(err => {
+          errstr = err;
+          console.log(err);
+        });
+    }
     })
   if(errstr){
     res.json(errstr);
