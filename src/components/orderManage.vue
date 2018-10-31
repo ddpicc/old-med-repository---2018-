@@ -7,10 +7,32 @@
     style="width: 100%">
     <el-table-column type="expand">
       <template slot-scope="medscope">
-          <el-table  :data="medscope.row.med" style="width: 100%">
-          <el-table-column prop="medname" label="药品名称" ></el-table-column>
-          <el-table-column prop="count"   label="剂量">  </el-table-column>
-          </el-table>
+          <table id="rounded" style="width: 100%">
+    <thead>
+    	<tr>
+        	<th scope="col" class="MedName1"> 药品名称</th>
+          <th scope="col" class="MedNm1"> 数量</th>
+          <th scope="col" class="MedName2"> 药品名称</th>
+          <th scope="col" class="MedNm2"> 数量</th>
+          <th scope="col" class="MedName3"> 药品名称</th>
+          <th scope="col" class="MedNm3"> 数量</th>
+          <th scope="col" class="MedName4"> 药品名称</th>
+          <th scope="col" class="MedNm4"> 数量</th>
+      </tr>
+    </thead>
+    <tbody>
+    	<tr v-for="item in medscope.row.med" :key="item.id">
+        	<td> {{item.medname1}} </td>
+          <td> {{item.count1}} </td>
+          <td> {{item.medname2}} </td>
+          <td> {{item.count2}} </td>
+          <td> {{item.medname3}} </td>
+          <td> {{item.count3}} </td>
+          <td> {{item.medname4}} </td>
+          <td> {{item.count4}} </td>
+      </tr>
+    </tbody>
+</table>
       </template>
     </el-table-column>
 

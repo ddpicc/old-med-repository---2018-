@@ -39,7 +39,7 @@
         :default-time="['23:59:59', '23:59:59']">>
       </el-date-picker>
     </span>
-    <el-table  :data="statementData" height="800" style="width: 100%" width="900">
+    <el-table  :data="gridData" height="800" show-summary style="width: 100%" width="900">
       <el-table-column prop="date" label="日期" width="100"></el-table-column>
       <el-table-column prop="patient" label="名称" width="400">  </el-table-column>
       <el-table-column prop="total" label="价钱" width="100">  </el-table-column>
@@ -65,7 +65,7 @@
         chartPie: null,
         threeMonthOrdData: [],
         dialogStatementVisible: false,
-        statementData: [],
+        gridData: [],
         dateValue: '',
         pickerOptions0: {
           disabledDate(time) {
@@ -294,7 +294,7 @@ this.chartBar.setOption({
       },
 
       closeDialog: function(){
-        this.statementData = [];//清空数据
+        this.gridData = [];//清空数据
         this.dialogStatementVisible = false;
       },
 
@@ -322,11 +322,11 @@ this.chartBar.setOption({
           startDate: start,
           endDate: end,
           };
-
+        var that = this;
         this.axios.get("/ordapi/getOrderStatement", {params:dateRange})
         .then(
           function(response) {
-            this.statementData = response.body;
+            that.gridData = response.data;
           },
           function() {
             console.log("error");

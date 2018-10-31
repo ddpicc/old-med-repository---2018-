@@ -31,13 +31,13 @@
     	<tr v-for="(item, index) in items" :key="item.id">
         	<td> {{item.MedName1}} </td>
           <td> {{item.MedNm1}} </td>
-          <td> <i class="el-icon-delete" @click="deleteMed(index)"></i> </td>
+          <td> <i class="el-icon-delete" @click="deleteFirst(index)"></i> </td>
           <td> {{item.MedName2}} </td>
           <td> {{item.MedNm2}} </td>
-          <td> <i class="el-icon-delete" @click="deleteMed(index)"></i> </td>
+          <td> <i class="el-icon-delete" @click="deleteSecond(index)"></i> </td>
           <td> {{item.MedName3}} </td>
           <td> {{item.MedNm3}} </td>
-          <td> <i class="el-icon-delete" @click="deleteMed(index)"></i> </td>
+          <td> <i class="el-icon-delete" @click="deleteThird(index)"></i> </td>
       </tr>
     </tbody>
 </table>
@@ -64,6 +64,7 @@
       ref="mark"
       @focus="focus($event)">
     </el-input>
+    <el-button type="success" icon="el-icon-plus" circle @click="postToTb"></el-button>
   </div>
 </el-row>
 <el-row class="medInfo">
@@ -135,9 +136,7 @@
         this.$refs.mark.$el.querySelector('input').focus();
       },
 
-      deleteMed(index){
-        //alert(this.items[index].MedName2);
-        let indexToDel = index * 3 + 1;
+      deleteAndDisplay(indexToDel){
         this.orderMed.splice(indexToDel,1);
         this.curCountPerLine = 1;
         this.newLine = true;
@@ -163,6 +162,21 @@
             this.curCountPerLine = 1;
           }
         }
+      },
+
+      deleteFirst(index){
+        var indexToDel = index * 3 + 0;
+        this.deleteAndDisplay(indexToDel);
+      },
+
+      deleteSecond(index){
+        var indexToDel = index * 3 + 1;
+        this.deleteAndDisplay(indexToDel);
+      },
+
+      deleteThird(index){
+        var indexToDel = index * 3 + 2;
+        this.deleteAndDisplay(indexToDel);
       },
 
       postToTb: function(){
@@ -279,12 +293,32 @@
           mydate = dateary.join('/');
         }
 
+        var index=1;
         for(let item of this.orderMed) {
-          orderToDb.push({
-            medname: item.medname,
-            count: item.count,
-          })
+          if(index==1){
+            orderToDb.push({
+              medname1: item.medname,
+              count1: item.count,
+            })
+            index = index+1;
+          }
+          else if(index==2){
+            orderToDb[orderToDb.length-1].medname2 = item.medname;
+            orderToDb[orderToDb.length-1].count2 = item.count;
+            index = index+1;
+          }
+          else if(index==3){
+            orderToDb[orderToDb.length-1].medname3 = item.medname;
+            orderToDb[orderToDb.length-1].count3 = item.count;
+            index = index+1;
+          }
+          else if(index==4){
+            orderToDb[orderToDb.length-1].medname4 = item.medname;
+            orderToDb[orderToDb.length-1].count4 = item.count;
+            index = 1;
+          }
         }
+        alert(JSON.stringify(orderToDb));
         ordProfit = (this.ordSellTotal - this.ordBaseTotal).toFixed(2);
         var addOrd = [{
           patient :this.patient,
@@ -298,7 +332,7 @@
           editable: true,
         }];
 
-        alert(JSON.stringify(addOrd));
+        //alert(JSON.stringify(addOrd));
 
         this.$http.post("/ordapi/order", addOrd).then(
           function(response) {
