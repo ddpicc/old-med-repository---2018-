@@ -58,10 +58,13 @@
       sortable>
     </el-table-column>
     <el-table-column
-        label="操作">
+        label="操作"
+        align="center"
+        width="300">
         <template slot-scope="scope">
             <el-button  size="small" type="success" v-if='scope.row.editable' @click="outdb(scope.row)" round>出库</el-button>
             <el-button type="danger" size="small" v-if='scope.row.editable' @click="deleteDate(scope.row['_id'])" round>删除</el-button>
+            <el-button type="primary" size="small" @click="reUes(scope.row)" round>重用</el-button>
         </template>
         </el-table-column>
   </el-table>

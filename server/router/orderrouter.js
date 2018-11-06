@@ -39,6 +39,8 @@ router.get("/getOrdinThreeMonth", (req, res) => {
   if(startMon<10)
     startMon = '0' + startMon;
   let endMon = (curmonth + 1) % 12;
+  if(endMon == 0)
+    endMon = '12';
   if(endMon<10)
     endMon = '0' + endMon;
   let start = nowdate.getFullYear() + '/' + startMon;

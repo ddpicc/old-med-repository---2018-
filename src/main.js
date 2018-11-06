@@ -6,6 +6,7 @@ import router from './router'
 import VueResource from 'vue-resource'
 import axios from 'axios'
 import Qs from 'qs'
+import store from './store'
 
 //引入element组件化框架
 import ElementUI from "element-ui"
@@ -23,6 +24,7 @@ Vue.prototype.qs = Qs;
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

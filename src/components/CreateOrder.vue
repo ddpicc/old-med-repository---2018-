@@ -1,5 +1,8 @@
 <template>
-<div> 
+<div class="create-order"> 
+<el-row class="patientName">
+  <el-input  placeholder="请输入病人名字" v-model="patient"></el-input>
+</el-row>
 <table id="rounded-corner" summary="2007 Major IT Companies' Profit">
     <thead>
     	<tr>
@@ -41,6 +44,9 @@
       </tr>
     </tbody>
 </table>
+<div class="confirmBtn">
+  <el-button type="success" size="small" @click="postOrdToDbSure" round>确认</el-button>
+</div>
 <el-row>
   <div class="typein">
   <el-autocomplete
@@ -68,17 +74,13 @@
   </div>
 </el-row>
 <el-row class="medInfo">
-  <el-tag type="success" style="width:20%">库存</el-tag>
-  <el-tag type="success" style="width:20%">{{remainInv}}</el-tag>
-  <el-tag type="success" style="width:20%">单价</el-tag>
-  <el-tag type="success" style="width:20%">{{singlePrice}}</el-tag>
+  <el-tag type="success" style="width:15%">库存</el-tag>
+  <el-tag type="success" style="width:15%">{{remainInv}}袋</el-tag>
+  <el-tag type="success" style="width:15%">单价</el-tag>
+  <el-tag type="success" style="width:15%">{{singlePrice}}元</el-tag>
+    <el-tag type="success" style="width:15%">含量</el-tag>
+  <el-tag type="success" style="width:15%">{{singleG}}克</el-tag>
 </el-row>
-<el-row class="patientName">
-  <el-input  placeholder="请输入病人名字" v-model="patient"></el-input>
-</el-row>
-<span class="confirmButton">
-  <el-button type="success" size="small" @click="postOrdToDbSure" round>确认</el-button>
-</span>
 </div>
 </template>
 
@@ -99,7 +101,8 @@
           total: '',
           patient: '',
           remainInv: '',
-          singlePrice: ''
+          singlePrice: '',
+          singleG: ''
 
       }
     },
@@ -132,6 +135,7 @@
 
         this.remainInv = existInDb.inventory;
         this.singlePrice = existInDb.sellprice;
+        this.singleG = existInDb.spec;
         //move focus to input dose
         this.$refs.mark.$el.querySelector('input').focus();
       },
@@ -180,6 +184,8 @@
       },
 
       postToTb: function(){
+
+        //this.$store.dispatch('addNumCount', 5);
         let searchStr = this.state2;
         if(searchStr === ""){
           alert("不能为空");
@@ -236,6 +242,7 @@
         if(this.orderCount === '')
           this.orderCount = 1;
         this.$refs.mark1.$el.querySelector('input').focus();
+        this.inputDose = 1;
       },
 
       //select text when get focus
@@ -269,7 +276,8 @@
                     "alias":  response.body[i].alias,
                     "baseprice": response.body[i].baseprice,
                     "sellprice": response.body[i].sellprice,
-                    "inventory": response.body[i].count
+                    "inventory": response.body[i].count,
+                    "spec": response.body[i].spec,
                   }
               );
             }
@@ -281,18 +289,33 @@
         );
       },
 
+      //获取当前时间，格式YYYY-MM-DD
+      getNowFormatDate() {
+      　　var date = new Date();
+      　　var seperator1 = "/";
+      　　var year = date.getFullYear();//年
+      　　var month = date.getMonth() + 1;//月
+      　　var strDate = date.getDate(); //日
+      　　if (month >= 1 && month <= 9) {
+      　　　　month = "0" + month;
+      　　}
+      　　if (strDate >= 0 && strDate <= 9) {
+      　　　　strDate = "0" + strDate;
+      　　}
+      　　var currentdate = year + seperator1 + month + seperator1 + strDate;
+      　　return currentdate;
+      },
+
       postOrdToDbSure:function(){
         let orderToDb = [];
         let ordProfit = 0.00;
-        let mydate = new Date();
-        let dateary = mydate.toLocaleDateString().split('/');
-        if(dateary[1].length == 1){
-          dateary[1] = '0' + dateary[1];
-          mydate = dateary.join('/');
-        } else{
-          mydate = dateary.join('/');
-        }
+        let mydate = this.getNowFormatDate();
 
+        if(this.orderMed.length == 0){
+          alert("订单为空");
+          return;
+        }
+        //alert(this.$store.state.count);
         var index=1;
         for(let item of this.orderMed) {
           if(index==1){
@@ -318,7 +341,6 @@
             index = 1;
           }
         }
-        alert(JSON.stringify(orderToDb));
         ordProfit = (this.ordSellTotal - this.ordBaseTotal).toFixed(2);
         var addOrd = [{
           patient :this.patient,
@@ -327,8 +349,8 @@
           date : mydate,
           med : orderToDb,
           dose : this.orderCount,
-          total : parseFloat(this.ordSellTotal),
-          totalprofit : parseFloat(ordProfit),
+          total : (this.ordSellTotal * this.orderCount).toFixed(2),
+          totalprofit : (parseFloat(ordProfit) * this.orderCount).toFixed(2),
           editable: true,
         }];
 
@@ -360,7 +382,8 @@
         this.curCountPerLine = 1;
         this.patient = ''
         this.inventory = '';
-        this.singlePrice = ''
+        this.singlePrice = '',
+        this.singleG = ''
       }
     },
     watch: {
@@ -429,16 +452,18 @@ body
   width: 10px;
 }
 
-.confirmbutton
+.confirmBtn
 {
-  margin: 45px;
+  text-align:right;
   width: 1100px;
-  align-content: right;
+  margin: 45px;
+  margin-bottom: 0px;
 }
 
 .patientName{
   margin: 45px;
   margin-top: 20px;
+  margin-bottom: 0px;
   width: 1100px;
 }
 
@@ -458,6 +483,7 @@ body
 	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
 	font-size: 12px;
 	margin: 45px;
+  margin-top: 0px;
 	width: 1100px;
 	text-align: left;
 	border-collapse: collapse;
@@ -495,5 +521,10 @@ body
 {
 	background: #d0dafd;
 }
+
+.el-autocomplete-suggestion li.highlighted, .el-autocomplete-suggestion li:hover {
+  background-color: #6ab2ff;
+}
+
  
 </style>
