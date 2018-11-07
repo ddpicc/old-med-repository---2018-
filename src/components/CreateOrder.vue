@@ -414,6 +414,10 @@
     },
     mounted() {
       this.getAll();
+      let ordTemp = this.$store.getters.getOrder;
+      alert("haha");
+      alert(JSON.stringify(ordTemp));
+
       //this.restaurants = this.loadToQuery();
     }
   };
@@ -478,6 +482,11 @@ body
   margin-top: 0px;
 }
 
+.el-autocomplete-suggestion li.highlighted
+{
+  background-color: #6ab2ff;
+}
+
 #rounded-corner
 {
 	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
@@ -522,9 +531,6 @@ body
 	background: #d0dafd;
 }
 
-.el-autocomplete-suggestion li.highlighted, .el-autocomplete-suggestion li:hover {
-  background-color: #6ab2ff;
-}
 
  
 </style>

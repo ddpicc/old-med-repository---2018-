@@ -181,6 +181,11 @@
         });
       },
 
+      reUes: function(row) {
+        alert(JSON.stringify(row));
+        this.$store.dispatch("setOrderToVuex",row);
+      },
+    
       deleteDate: function(id) {
       var that = this;
       var deleteId = id;
