@@ -27,7 +27,7 @@
           <td colspan="6"></td>
         	<td class="inputCount"> <input v-model="orderCount" @focus="focus($event)"> </td>
         	<td class="rounded-foot-right">合计 </td>
-          <td> {{total}} </td>
+          <td> <input v-model="total" @focus="focus($event)"></td>
         </tr>
       </tfoot>
     <tbody>
@@ -281,6 +281,7 @@
                   }
               );
             }
+            this.unpackOrdVuex();
           },
           function() {
             this.loading = false;
@@ -308,7 +309,6 @@
 
       postOrdToDbSure:function(){
         let orderToDb = [];
-        let ordProfit = 0.00;
         let mydate = this.getNowFormatDate();
 
         if(this.orderMed.length == 0){
@@ -341,16 +341,15 @@
             index = 1;
           }
         }
-        ordProfit = (this.ordSellTotal - this.ordBaseTotal).toFixed(2);
         var addOrd = [{
           patient :this.patient,
           orderalias: 'new',
-          address : this.address,
+          type : '收入',
           date : mydate,
           med : orderToDb,
           dose : this.orderCount,
-          total : (this.ordSellTotal * this.orderCount).toFixed(2),
-          totalprofit : (parseFloat(ordProfit) * this.orderCount).toFixed(2),
+          total : parseFloat(this.total),
+          totalprofit : (parseFloat(this.total) - parseFloat((this.ordBaseTotal * this.orderCount).toFixed(2))).toFixed(2),
           editable: true,
         }];
 
@@ -384,7 +383,99 @@
         this.inventory = '';
         this.singlePrice = '',
         this.singleG = ''
+        this.$store.dispatch("setOrderToVuex",[]);
+      },
+
+      unpackOrdVuex: function(){
+        let ordVuex = this.$store.getters.getOrder;
+        
+        if(ordVuex.length == 0)
+          return;
+        
+        this.patient = ordVuex.patient;
+        //unpack to orderMed
+        for(let item of ordVuex.med) {
+          if(typeof(item.medname1) == 'undefined')
+            break;
+          else{
+            let existInDb = this.medsToShow.find(function(p){
+            return p.value === item.medname1;
+            })
+            this.orderMed.push({
+            medname: item.medname1,
+            count: item.count1,
+            baseprice: existInDb.baseprice,
+            sellprice: existInDb.sellprice
+            })
+          }
+          if(typeof(item.medname2) == 'undefined')
+            break;
+          else{
+            let existInDb = this.medsToShow.find(function(p){
+            return p.value === item.medname2;
+            })
+            this.orderMed.push({
+            medname: item.medname2,
+            count: item.count2,
+            baseprice: existInDb.baseprice,
+            sellprice: existInDb.sellprice
+            })
+          }
+          if(typeof(item.medname3) == 'undefined')
+            break;
+          else{
+            let existInDb = this.medsToShow.find(function(p){
+            return p.value === item.medname3;
+            })
+            this.orderMed.push({
+            medname: item.medname3,
+            count: item.count3,
+            baseprice: existInDb.baseprice,
+            sellprice: existInDb.sellprice
+            })
+          }
+          if(typeof(item.medname4) == 'undefined')
+            break;
+          else{
+            let existInDb = this.medsToShow.find(function(p){
+            return p.value === item.medname4;
+            })
+            this.orderMed.push({
+            medname: item.medname4,
+            count: item.count4,
+            baseprice: existInDb.baseprice,
+            sellprice: existInDb.sellprice
+            })
+          }
+        }
+        //alert(JSON.stringify(this.orderMed));
+        //unpack and display to table
+        this.curCountPerLine = 1;
+        this.newLine = true;
+        this.items = [];
+
+        for(let item of this.orderMed){
+          if(this.newLine == false){
+            if(this.curCountPerLine == 1){
+              this.$set(this.items[this.items.length-1],"MedName2", item.medname);
+              this.$set(this.items[this.items.length-1],"MedNm2", item.count);
+              this.curCountPerLine = this.curCountPerLine + 1;
+            }
+            else if(this.curCountPerLine == 2){
+              this.$set(this.items[this.items.length-1],"MedName3", item.medname);
+              this.$set(this.items[this.items.length-1],"MedNm3", item.count);
+              this.newLine = true;
+              this.curCountPerLine = this.curCountPerLine + 1;
+            }
+          }
+          else{
+            this.items.push({MedName1:item.medname, MedNm1:item.count});
+            this.newLine = false;
+            this.curCountPerLine = 1;
+          }
+        }
       }
+
     },
     watch: {
       orderMed: function(){
@@ -414,10 +505,7 @@
     },
     mounted() {
       this.getAll();
-      let ordTemp = this.$store.getters.getOrder;
-      alert("haha");
-      alert(JSON.stringify(ordTemp));
-
+      
       //this.restaurants = this.loadToQuery();
     }
   };
@@ -430,18 +518,6 @@ body
 {
 	line-height: 1.6em;
 }
-.name {
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
-.alias {
-      font-size: 12px;
-      color: #b4b4b4;
-    }
-.name .alias {
-      display:flex;
-      float: left;
-    }
 
 .typein
 {
@@ -482,10 +558,7 @@ body
   margin-top: 0px;
 }
 
-.el-autocomplete-suggestion li.highlighted
-{
-  background-color: #6ab2ff;
-}
+
 
 #rounded-corner
 {
@@ -531,6 +604,4 @@ body
 	background: #d0dafd;
 }
 
-
- 
 </style>

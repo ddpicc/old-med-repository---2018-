@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 const ordSchema = new Schema({
     patient :String,
     orderalias: String,
-    address : String,
+    type : String,
     date: String,
     med : [Schema.Types.Mixed],
     dose : Number,

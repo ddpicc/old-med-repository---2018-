@@ -3,6 +3,7 @@
   <el-row class="warp">
     <el-col :span="24" class="warp-breadcrum">
       <el-button type="text" @click="openStatement">流水详情 </el-button>
+      <el-button type="text" @click="addExpenseVisible = true">添加收支项 </el-button>
     </el-col>
 
     <el-col :span="24" class="warp-main">
@@ -41,13 +42,51 @@
     </span>
     <el-table  :data="gridData" height="800" show-summary style="width: 100%" width="900">
       <el-table-column prop="date" label="日期" width="100"></el-table-column>
-      <el-table-column prop="patient" label="名称" width="400">  </el-table-column>
+      <el-table-column prop="patient" label="名称" width="300">  </el-table-column>
+      <el-table-column prop="type" label="类型" width="100">  </el-table-column>
       <el-table-column prop="total" label="价钱" width="100">  </el-table-column>
     </el-table>
     <div class="order-input">
       <el-button type="success" size="small" @click="printStatement" round> 打印</el-button>
       <el-button type="success" size="small" @click="closeDialog" round>取消</el-button>
     </div>
+  </el-dialog>
+
+  <el-dialog title="新增收支" :visible.sync="addExpenseVisible" class="addExpense" modal custom-class="addFormExpense" @close="closeAddExpense">
+  <el-form :model="addEsForm">
+    <el-form-item label="详情:">
+      <el-col :span="22">
+      <el-input v-model="addEsForm.detail"></el-input>
+      </el-col>
+    </el-form-item>
+    <el-row>
+      <el-col :span="12">
+        <el-form-item label="类型:">          
+          <el-select v-model="addEsForm.type" placeholder="请选择类型">
+            <el-option label="支出" value="支出"></el-option>
+            <el-option label="收入" value="收入"></el-option>
+          </el-select>          
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="日期:">          
+          <el-date-picker type="date" placeholder="选择日期" v-model="addEsForm.date"></el-date-picker>          
+        </el-form-item>
+      </el-col>
+    </el-row>
+    <el-form-item label="数额:">
+      <el-col :span="4">
+        <el-input v-model="addEsForm.amount"></el-input>
+      </el-col>
+      <el-col :span="2">
+        元
+      </el-col>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="addExpenseVisible = false">取 消</el-button>
+    <el-button type="primary" @click="addExpenseSure">确 定</el-button>
+  </div>
   </el-dialog>
 </div>
 </template>
@@ -71,7 +110,15 @@
           disabledDate(time) {
             return time.getTime() > Date.now();
           }
-        },  
+        }, 
+        addExpenseVisible: false,
+        addEsForm: {
+          detail: '',
+          type: '',
+          date: '',
+          amount: 0,
+        }
+
       };
     },
 
@@ -332,6 +379,73 @@ this.chartBar.setOption({
             console.log("error");
           }
         );
+      },
+
+      //获取当前时间，格式YYYY-MM-DD
+      getNowFormatDate(inputDate) {
+      　　var date = inputDate;
+      　　var seperator1 = "/";
+      　　var year = date.getFullYear();//年
+      　　var month = date.getMonth() + 1;//月
+      　　var strDate = date.getDate(); //日
+      　　if (month >= 1 && month <= 9) {
+      　　　　month = "0" + month;
+      　　}
+      　　if (strDate >= 0 && strDate <= 9) {
+      　　　　strDate = "0" + strDate;
+      　　}
+      　　var currentdate = year + seperator1 + month + seperator1 + strDate;
+      　　return currentdate;
+      },
+
+      addExpenseSure: function(){
+        //alert(this.addEsForm.detail);
+        //alert(this.addEsForm.type);
+        //alert(this.getNowFormatDate(this.addEsForm.date));
+        //alert(this.addEsForm.amount);
+        let tempTotal;
+        if(this.addEsForm.type == "支出")
+          tempTotal = -1 * this.addEsForm.amount;
+        var addEntry = [{
+          patient :this.addEsForm.detail,
+          orderalias: 'new',
+          type : this.addEsForm.type,
+          date : this.getNowFormatDate(this.addEsForm.date),
+          total : tempTotal,
+          totalprofit: tempTotal,
+          editable: false,
+        }];
+
+        //alert(JSON.stringify(addEntry));
+
+        this.$http.post("/ordapi/order", addEntry).then(
+          function(response) {
+            if (response.ok) {
+              this.$message({
+                message: "添加成功",
+                type: "success"
+              });
+            }
+            this.loading = true;
+          },
+          function() {
+            // this.loading = false;
+          }
+        );
+        this.addEsForm.detail = '';
+        this.addEsForm.type = '';
+        this.addEsForm.date = '';
+        this.addEsForm.amount = 0;
+        this.addExpenseVisible = false;
+
+      },
+
+      // 关闭dialog的函数
+      closeAddExpense: function() {
+        this.addEsForm.detail = '';
+        this.addEsForm.type = '';
+        this.addEsForm.date = '';
+        this.addEsForm.amount = 0;
       },
 
       printStatement: function(){

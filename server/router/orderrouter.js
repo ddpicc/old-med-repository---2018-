@@ -48,7 +48,8 @@ router.get("/getOrdinThreeMonth", (req, res) => {
   console.log(start);
   console.log(end);
   Ord.find({"date":{$gte: start, $lte: end},
-            "editable": false})
+            "editable": false,
+            "type": "收入"})
     .sort({ update_at: -1 })
     .then(heros => {
       res.json(heros);

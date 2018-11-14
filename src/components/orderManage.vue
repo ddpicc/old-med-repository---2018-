@@ -64,11 +64,10 @@
         <template slot-scope="scope">
             <el-button  size="small" type="success" v-if='scope.row.editable' @click="outdb(scope.row)" round>出库</el-button>
             <el-button type="danger" size="small" v-if='scope.row.editable' @click="deleteDate(scope.row['_id'])" round>删除</el-button>
-            <el-button type="primary" size="small" @click="reUes(scope.row)" round>重用</el-button>
+            <el-button type="primary" size="small" v-if='!scope.row.editable' @click="reUes(scope.row)" round>重用</el-button>
         </template>
         </el-table-column>
   </el-table>
-  <el-button type="primary" class="addBtn" @click="addInventory" icon="el-icon-plus">添加</el-button>
 </div>
 </template>
 
@@ -182,8 +181,15 @@
       },
 
       reUes: function(row) {
-        alert(JSON.stringify(row));
-        this.$store.dispatch("setOrderToVuex",row);
+        let tempOrder = {
+          med: row.med,
+          patient: row.patient,
+          dose: row.dose,
+          total: row.total,
+          totalprofit: row.totalprofit
+        }
+        this.$store.dispatch("setOrderToVuex",tempOrder);
+        this.$router.push('CreateOrd');
       },
     
       deleteDate: function(id) {
@@ -232,7 +238,7 @@
   };
 </script>
 
-<style>
+<style scoped>
   .demo-table-expand {
     font-size: 0;
   }
