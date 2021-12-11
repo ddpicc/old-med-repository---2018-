@@ -1,15 +1,9 @@
 <<<<<<< HEAD
-# express-mongodb-node
-前后端分离实现增删改查
+第一版中医诊所管理系统
+2018年
+vue elementui express
 
-# 阿门
-=======
-<<<<<<< HEAD
-# express-mongodb-node
-前后端分离实现增删改查
-=======
-# express-mongodb
-
+#
 > A Vue.js project
 
 ## Build Setup
@@ -29,6 +23,5 @@ npm run build --report
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
->>>>>>> Version1.01
->>>>>>> Version1.01
+
 #medRepository
